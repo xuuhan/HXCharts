@@ -24,6 +24,8 @@
 
 @property (nonatomic, strong) NSMutableArray *markLabelArray;
 
+@property (nonatomic, strong) CAShapeLayer *circleLayer;
+
 @end
 
 @implementation HXGaugeChart
@@ -146,6 +148,11 @@
 
 - (void)setLocations:(NSArray *)locations{
     _colorLayer.locations = locations;
+}
+
+- (void)setCircleColor:(UIColor *)circleColor{
+    _circleLayer.strokeColor = circleColor.CGColor;
+    [self.layer addSublayer:_circleLayer];
 }
 
 - (void)setMarkCount:(int)markCount{

@@ -44,6 +44,8 @@
         
         gauge.markCount = 7;
         
+        gauge.circleColor = [UIColor redColor];
+        
     } else if (index == 1){///圆形图
     
     } else if (index == 2){///柱状图

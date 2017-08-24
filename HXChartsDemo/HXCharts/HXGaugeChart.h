@@ -22,4 +22,5 @@
 @property (nonatomic, strong) NSArray *locations;
 ///要显示的标注个数
 @property (nonatomic, assign) int markCount;
+
 @end
