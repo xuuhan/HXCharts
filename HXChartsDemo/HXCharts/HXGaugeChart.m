@@ -20,6 +20,10 @@
 
 @property (nonatomic, assign) CGFloat width;
 
+@property (nonatomic, assign) CGFloat halfWidth;
+
+@property (nonatomic, assign) CGPoint viewCenter;
+
 @property (nonatomic, strong) CAGradientLayer *colorLayer;
 
 @property (nonatomic, strong) NSMutableArray *markLabelArray;
@@ -52,19 +56,21 @@
 
 -(void)drawArc
 {
+    
     NSLog(@"%f",_value / _maxValue);
 
     _width = self.frame.size.width;
     
     ///计算中心点
     CGPoint center = CGPointMake(self.frame.size.width * 0.5, self.frame.size.height * 0.5);
-    
+    _viewCenter = center;
     ///外圆
     CGFloat radius = self.frame.size.width * 0.5 - 15;
     _radius = radius;
     UIBezierPath* arcPath = [UIBezierPath bezierPathWithArcCenter:center radius:radius startAngle:M_PI endAngle:0 clockwise:YES];
     
     CAShapeLayer *shapelayer = [CAShapeLayer layer];
+    _circleLayer = shapelayer;
     shapelayer.lineWidth = 3.0;
     shapelayer.strokeColor = [UIColor colorWithRed:51.0/255.0 green:55.0/255.0 blue:60.0/255.0 alpha:1].CGColor;
     shapelayer.fillColor = [UIColor clearColor].CGColor;
@@ -75,10 +81,11 @@
     ///内圆
     CGFloat insetRadius = radius - 20;
    
-    UIBezierPath *insetArcPath = [UIBezierPath bezierPathWithArcCenter:center radius:insetRadius startAngle:M_PI endAngle:M_PI * 2 * (_value / _maxValue) clockwise:YES];
+    UIBezierPath *insetArcPath = [UIBezierPath bezierPathWithArcCenter:center radius:insetRadius startAngle:M_PI endAngle:M_PI * (1 + (M_PI * 2 * (_value / _maxValue)) / (M_PI * 2)) clockwise:YES];
     
     CAShapeLayer *insetShapelayer = [CAShapeLayer layer];
     insetShapelayer.lineWidth = 20.0;
+    _halfWidth = insetShapelayer.lineWidth /2;
     insetShapelayer.strokeColor = [UIColor clearColor].CGColor;
     insetShapelayer.fillColor = [UIColor clearColor].CGColor;
     insetShapelayer.path = insetArcPath.CGPath;
@@ -126,17 +133,6 @@
 }
 
 #pragma mark set
-- (void)setValueTitle:(NSString *)valueTitle{
-    _valueLabel.text = valueTitle;
-}
-
-- (void)setValueFont:(UIFont *)valueFont{
-    _valueLabel.font = valueFont;
-}
-
--(void)setValueColor:(UIColor *)valueColor{
-    _valueLabel.textColor = valueColor;
-}
 
 - (void)setColorArray:(NSArray *)colorArray{
     NSMutableArray *array = [NSMutableArray array];
@@ -155,14 +151,46 @@
     [self.layer addSublayer:_circleLayer];
 }
 
+- (void)setOuterCircleColor:(UIColor *)outerCircleColor{
+    _circleLayer.strokeColor = outerCircleColor.CGColor;
+}
+
+- (void)setOuterCircleWidth:(CGFloat)outerCircleWidth{
+    _circleLayer.lineWidth = outerCircleWidth;
+}
+
+- (void)setValueTitle:(NSString *)valueTitle{
+    _valueLabel.text = valueTitle;
+}
+
+- (void)setValueFont:(UIFont *)valueFont{
+    _valueLabel.font = valueFont;
+}
+
+-(void)setValueColor:(UIColor *)valueColor{
+    _valueLabel.textColor = valueColor;
+}
+
+- (void)setMarkColor:(UIColor *)markColor{
+    for (UILabel *label in _markLabelArray) {
+        label.textColor = markColor;
+    }
+}
+
+- (void)setMarkFont:(UIFont *)markFont{
+    for (UILabel *label in _markLabelArray) {
+        label.font = markFont;
+    }
+}
+
 - (void)setMarkCount:(int)markCount{
-    
+
     for (int i = 0; i < markCount; i ++) {
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 30, 20)];
         [self addSubview:label];
+        [self.markLabelArray addObject:label];
         label.font = [UIFont systemFontOfSize:12];
         label.textColor = [UIColor whiteColor];
-        label.backgroundColor = [UIColor redColor];
         label.textAlignment = NSTextAlignmentCenter;
         
         CGFloat centerX = 0.0;
@@ -170,12 +198,37 @@
         CGFloat margin = 0.0;
         CGFloat half = label.frame.size.width / 2;
         CGFloat firstLCX = (_width - _radius * 2) / 2 - 5 - half;
+        CGFloat radius = _radius + 5 + half;
+        CGFloat markRadius = half + 10 + _halfWidth;
         
         margin = i * ((_radius * 2 + 5 * 2 + half * 2) / (markCount - 1));
         centerX = firstLCX + margin;
-        centerY = 0;
         
-        label.center = CGPointMake(centerX, 200);
+        centerY = self.frame.size.height - (sqrt(radius * radius - (centerX - self.frame.size.width / 2) * (centerX - self.frame.size.width / 2)) + self.frame.size.height / 2);
+
+        
+        if (i < markCount / 2 && i != 0 && i != markCount - 1) {
+            CGFloat CX = centerX - markRadius;
+            centerX -= (centerX - CX) / 2;
+
+            centerY = self.frame.size.height - (sqrt(radius * radius - (centerX - self.frame.size.width / 2) * (centerX - self.frame.size.width / 2)) + self.frame.size.height / 2);
+        }
+
+        if ((i > markCount / 2 && i != 0 && i != markCount - 1) || (markCount % 2 == 0 && i == markCount / 2)) {
+            CGFloat CX = centerX + markRadius;
+            centerX += (CX - centerX) / 2;
+            centerY = self.frame.size.height - (sqrt(radius * radius - (centerX - self.frame.size.width / 2) * (centerX - self.frame.size.width / 2)) + self.frame.size.height / 2);
+        }
+        
+        label.center = CGPointMake(centerX, centerY);
+        
+        if (i == 0) {
+            label.text = @"0";
+        } else if (i == markCount - 1){
+            label.text = [NSString stringWithFormat:@"%.0f",_maxValue];
+        } else{
+            label.text = [NSString stringWithFormat:@"%.0f",_maxValue / (markCount - 1) * i];
+        }
     }
 }
 

@@ -30,21 +30,18 @@
     CGFloat y = (height - chartWidth) / 2;
     
     if (index == 0) {///仪表盘
-        HXGaugeChart *gauge = [[HXGaugeChart alloc] initWithFrame:CGRectMake(x, y, chartWidth, chartWidth) withMaxValue:300 value:280];
+        HXGaugeChart *gauge = [[HXGaugeChart alloc] initWithFrame:CGRectMake(x, y, chartWidth, chartWidth) withMaxValue:300 value:275];
         
         [self.view addSubview:gauge];
         
-        gauge.valueTitle = @"280";
+        gauge.valueTitle = @"275";
         
         gauge.colorArray = @[[self colorWithHexString:@"#33d24e" alpha:1],
                              [self colorWithHexString:@"#f8e71c" alpha:1],
                              [self colorWithHexString:@"#ff9500" alpha:1],
                              [self colorWithHexString:@"#ff4e65" alpha:1]];
         gauge.locations = @[@0.15,@0.4,@0.65,@0.8];
-        
-        gauge.markCount = 7;
-        
-        gauge.circleColor = [UIColor redColor];
+        gauge.markCount = 5;
         
     } else if (index == 1){///圆形图
     
@@ -53,10 +50,7 @@
     } else if (index == 3){///折线图
         
     }
-//    tools.iPadHomeColor1 = [tools colorWithHexString:@"#ff4e65" alpha:1];
-//    tools.iPadHomeColor2 = [tools colorWithHexString:@"#ff9500" alpha:1];
-//    tools.iPadHomeColor3 = [tools colorWithHexString:@"#f8e71c" alpha:1];
-//    tools.iPadHomeColor4 = [tools colorWithHexString:@"#33d24e" alpha:1];
+
 }
 
 #pragma mark 设置16进制颜色

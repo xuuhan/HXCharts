@@ -8,19 +8,25 @@
 
 #import <UIKit/UIKit.h>
 
+
 @interface HXGaugeChart : UIView
 
 ///初始化方法
 - (instancetype)initWithFrame:(CGRect)frame withMaxValue:(CGFloat)maxValue value:(CGFloat)value;
 ///值相关
 @property (nonatomic, copy) NSString *valueTitle;
-@property (nonatomic, copy) UIColor *valueColor;
-@property (nonatomic, copy) UIFont *valueFont;
+@property (nonatomic, weak) UIColor *valueColor;
+@property (nonatomic, weak) UIFont *valueFont;
 ///渐变色数组
 @property (nonatomic, strong) NSArray *colorArray;
-///渐变色数组所占位置 (比如@[@0.1,@0.3,@0.7])
+///渐变色数组所占位置
 @property (nonatomic, strong) NSArray *locations;
 ///要显示的标注个数
 @property (nonatomic, assign) int markCount;
-
+@property (nonatomic, weak) UIColor *markColor;
+@property (nonatomic, weak) UIFont *markFont;
+///外圆颜色
+@property (nonatomic, strong) UIColor *outerCircleColor;
+///外圆线宽
+@property (nonatomic, assign) CGFloat outerCircleWidth;
 @end
