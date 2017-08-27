@@ -15,6 +15,12 @@
 @property (nonatomic, assign) CGFloat maxValue;
 
 @property (nonatomic, strong) CAGradientLayer *colorLayer;
+
+@property (nonatomic, strong) CAShapeLayer *insideShapelayer;
+
+@property (nonatomic, strong) CAShapeLayer *outerShapelayer;
+
+@property (nonatomic, strong) CAGradientLayer *gradientLayer;
 @end
 
 @implementation HXCircleChart
@@ -50,27 +56,29 @@
     UIBezierPath* arcPath = [UIBezierPath bezierPathWithArcCenter:center radius:radius startAngle:0 endAngle:2 * M_PI clockwise:YES];
     
     CAShapeLayer *shapelayer = [CAShapeLayer layer];
+    _insideShapelayer = shapelayer;
     shapelayer.lineWidth = 20.0;
-    shapelayer.strokeColor = [self colorWithHexString:@"#33373c" alpha:1].CGColor;
+    shapelayer.strokeColor = [UIColor colorWithRed:51.0/255.0 green:55.0/255.0 blue:60.0/255.0 alpha:1].CGColor;
     shapelayer.fillColor = [UIColor clearColor].CGColor;
     shapelayer.path = arcPath.CGPath;
     
     [self.layer addSublayer:shapelayer];
     
     ///顶层圆
-    CGFloat insetRadius = radius;
+    CGFloat outerRadius = radius;
     
     NSLog(@"value:%f---maxValue:%f",_value,_maxValue);
     
-    UIBezierPath *insetArcPath = [UIBezierPath bezierPathWithArcCenter:center radius:insetRadius startAngle:-M_PI_2 endAngle:M_PI * 2 * (_value / _maxValue) - M_PI_2  clockwise:YES];
+    UIBezierPath *outerArcPath = [UIBezierPath bezierPathWithArcCenter:center radius:outerRadius startAngle:-M_PI_2 endAngle:M_PI * 2 * (_value / _maxValue) - M_PI_2  clockwise:YES];
     
-    CAShapeLayer *insetShapelayer = [CAShapeLayer layer];
-    insetShapelayer.lineWidth = 20.0;
-    insetShapelayer.strokeColor = [UIColor colorWithRed:51.0/255.0 green:55.0/255.0 blue:60.0/255.0 alpha:1].CGColor;
-    insetShapelayer.fillColor = [UIColor clearColor].CGColor;
-    insetShapelayer.path = insetArcPath.CGPath;
+    CAShapeLayer *outerShapelayer = [CAShapeLayer layer];
+    _outerShapelayer = outerShapelayer;
+    outerShapelayer.lineWidth = 20.0;
+    outerShapelayer.strokeColor = [UIColor clearColor].CGColor;
+    outerShapelayer.fillColor = [UIColor clearColor].CGColor;
+    outerShapelayer.path = outerArcPath.CGPath;
     
-    [self.layer addSublayer:insetShapelayer];
+    [self.layer addSublayer:outerShapelayer];
 
     ///标注
     UILabel *valueLabel = [[UILabel alloc] init];
@@ -85,6 +93,7 @@
     valueLabel.textAlignment = NSTextAlignmentCenter;
 
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    _gradientLayer = gradientLayer;
     gradientLayer.frame = self.bounds;
     gradientLayer.backgroundColor = [UIColor clearColor].CGColor;
     [self.layer addSublayer:gradientLayer];
@@ -103,7 +112,7 @@
     gressLayer.strokeColor = [UIColor blueColor].CGColor;
     gressLayer.fillColor = [UIColor clearColor].CGColor;
     gressLayer.lineCap = @"bevel";
-    gressLayer.path = insetArcPath.CGPath;
+    gressLayer.path = outerArcPath.CGPath;
     gradientLayer.mask = gressLayer;
     
     CABasicAnimation *ani = [ CABasicAnimation animationWithKeyPath : NSStringFromSelector ( @selector (strokeEnd))];
@@ -115,9 +124,19 @@
 
 #pragma mark set
 - (void)setValueTitle:(NSString *)valueTitle{
-    _valueTitle = valueTitle;
     _valueLabel.text = valueTitle;
-    
+}
+
+- (void)setValueFont:(UIFont *)valueFont{
+    _valueLabel.font = valueFont;
+}
+
+- (void)setValueColor:(UIColor *)valueColor{
+    _valueLabel.textColor = valueColor;
+}
+
+- (void)setInsideCircleColor:(UIColor *)insideCircleColor{
+    _insideShapelayer.strokeColor = insideCircleColor.CGColor;
 }
 
 - (void)setColorArray:(NSArray *)colorArray{
@@ -132,51 +151,19 @@
     _colorLayer.colors = array.copy;
 }
 
-
-#pragma mark 设置16进制颜色
-- (UIColor *)colorWithHexString:(NSString *)color alpha:(CGFloat)alpha{
-    //删除字符串中的空格
-    NSString *cString = [[color stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];
-    // String should be 6 or 8 characters
-    if ([cString length] < 6)
-    {
-        return [UIColor clearColor];
-    }
-    // strip 0X if it appears
-    //如果是0x开头的，那么截取字符串，字符串从索引为2的位置开始，一直到末尾
-    if ([cString hasPrefix:@"0X"])
-    {
-        cString = [cString substringFromIndex:2];
-    }
-    //如果是#开头的，那么截取字符串，字符串从索引为1的位置开始，一直到末尾
-    if ([cString hasPrefix:@"#"])
-    {
-        cString = [cString substringFromIndex:1];
-    }
-    if ([cString length] != 6)
-    {
-        return [UIColor clearColor];
-    }
-    
-    // Separate into r, g, b substrings
-    NSRange range;
-    range.location = 0;
-    range.length = 2;
-    //r
-    NSString *rString = [cString substringWithRange:range];
-    //g
-    range.location = 2;
-    NSString *gString = [cString substringWithRange:range];
-    //b
-    range.location = 4;
-    NSString *bString = [cString substringWithRange:range];
-    
-    // Scan values
-    unsigned int r, g, b;
-    [[NSScanner scannerWithString:rString] scanHexInt:&r];
-    [[NSScanner scannerWithString:gString] scanHexInt:&g];
-    [[NSScanner scannerWithString:bString] scanHexInt:&b];
-    return [UIColor colorWithRed:((float)r / 255.0f) green:((float)g / 255.0f) blue:((float)b / 255.0f) alpha:alpha];
-    
+- (void)setLocations:(NSArray *)locations{
+    _colorLayer.locations = locations;
 }
+
+- (void)setSingleColor:(UIColor *)singleColor{
+    _outerShapelayer.strokeColor = singleColor.CGColor;
+    [_gradientLayer removeFromSuperlayer];
+    
+    CABasicAnimation *ani = [ CABasicAnimation animationWithKeyPath : NSStringFromSelector ( @selector (strokeEnd))];
+    ani.fromValue = @0;
+    ani.toValue = @1;
+    ani.duration = 1.0;
+    [_outerShapelayer addAnimation:ani forKey:NSStringFromSelector(@selector(strokeEnd))];
+}
+
 @end

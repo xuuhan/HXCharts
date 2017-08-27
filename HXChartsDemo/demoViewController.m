@@ -30,21 +30,28 @@
     CGFloat y = (height - chartWidth) / 2;
     
     if (index == 0) {///仪表盘
-        HXGaugeChart *gauge = [[HXGaugeChart alloc] initWithFrame:CGRectMake(x, y, chartWidth, chartWidth) withMaxValue:300 value:275];
+        HXGaugeChart *gauge = [[HXGaugeChart alloc] initWithFrame:CGRectMake(x, y, chartWidth, chartWidth) withMaxValue:300 value:225];
         
         [self.view addSubview:gauge];
         
-        gauge.valueTitle = @"275";
-        
+        gauge.valueTitle = @"225";
         gauge.colorArray = @[[self colorWithHexString:@"#33d24e" alpha:1],
                              [self colorWithHexString:@"#f8e71c" alpha:1],
                              [self colorWithHexString:@"#ff9500" alpha:1],
                              [self colorWithHexString:@"#ff4e65" alpha:1]];
         gauge.locations = @[@0.15,@0.4,@0.65,@0.8];
         gauge.markCount = 5;
-        
-    } else if (index == 1){///圆形图
     
+    } else if (index == 1){///圆形图
+        HXCircleChart *circle = [[HXCircleChart alloc] initWithFrame:CGRectMake(x, y, chartWidth, chartWidth) withMaxValue:100 value:85];
+        
+        [self.view addSubview:circle];
+         
+        circle.valueTitle = @"85%";
+        
+        circle.colorArray = @[[self colorWithHexString:@"#00fec7" alpha:1],[self colorWithHexString:@"#00d8fe" alpha:1]];
+        circle.locations = @[@0.15,@.85];
+        
     } else if (index == 2){///柱状图
         
     } else if (index == 3){///折线图

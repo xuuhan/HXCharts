@@ -28,7 +28,11 @@
 
 @property (nonatomic, strong) NSMutableArray *markLabelArray;
 
-@property (nonatomic, strong) CAShapeLayer *circleLayer;
+@property (nonatomic, strong) CAShapeLayer *outerCircleLayer;
+
+@property (nonatomic, strong) CAShapeLayer *insideCircleLayer;
+
+@property (nonatomic, strong) CAGradientLayer *gradientLayer;
 
 @end
 
@@ -70,7 +74,7 @@
     UIBezierPath* arcPath = [UIBezierPath bezierPathWithArcCenter:center radius:radius startAngle:M_PI endAngle:0 clockwise:YES];
     
     CAShapeLayer *shapelayer = [CAShapeLayer layer];
-    _circleLayer = shapelayer;
+    _outerCircleLayer = shapelayer;
     shapelayer.lineWidth = 3.0;
     shapelayer.strokeColor = [UIColor colorWithRed:51.0/255.0 green:55.0/255.0 blue:60.0/255.0 alpha:1].CGColor;
     shapelayer.fillColor = [UIColor clearColor].CGColor;
@@ -79,18 +83,19 @@
     [self.layer addSublayer:shapelayer];
     
     ///内圆
-    CGFloat insetRadius = radius - 20;
+    CGFloat insideRadius = radius - 20;
    
-    UIBezierPath *insetArcPath = [UIBezierPath bezierPathWithArcCenter:center radius:insetRadius startAngle:M_PI endAngle:M_PI * (1 + (M_PI * 2 * (_value / _maxValue)) / (M_PI * 2)) clockwise:YES];
+    UIBezierPath *insideArcPath = [UIBezierPath bezierPathWithArcCenter:center radius:insideRadius startAngle:M_PI endAngle:M_PI * (1 + (M_PI * 2 * (_value / _maxValue)) / (M_PI * 2)) clockwise:YES];
+
+    CAShapeLayer *insideShapelayer = [CAShapeLayer layer];
+    _insideCircleLayer = insideShapelayer;
+    insideShapelayer.lineWidth = 20.0;
+    _halfWidth = insideShapelayer.lineWidth /2;
+    insideShapelayer.strokeColor = [UIColor clearColor].CGColor;
+    insideShapelayer.fillColor = [UIColor clearColor].CGColor;
+    insideShapelayer.path = insideArcPath.CGPath;
     
-    CAShapeLayer *insetShapelayer = [CAShapeLayer layer];
-    insetShapelayer.lineWidth = 20.0;
-    _halfWidth = insetShapelayer.lineWidth /2;
-    insetShapelayer.strokeColor = [UIColor clearColor].CGColor;
-    insetShapelayer.fillColor = [UIColor clearColor].CGColor;
-    insetShapelayer.path = insetArcPath.CGPath;
-    
-    [self.layer addSublayer:insetShapelayer];
+    [self.layer addSublayer:insideShapelayer];
     
     ///标注值
     UILabel *valueLabel = [[UILabel alloc] init];
@@ -99,12 +104,13 @@
     
     self.valueLabel = valueLabel;
     
-    valueLabel.frame = CGRectMake(center.x - 50, center.y - 20, 100, 20);
+    valueLabel.frame = CGRectMake(center.x - 50, center.y - 25, 100, 25);
     valueLabel.textColor = [UIColor whiteColor];
     valueLabel.font = [UIFont systemFontOfSize:20 weight:2];
     valueLabel.textAlignment = NSTextAlignmentCenter;
     
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    _gradientLayer = gradientLayer;
     gradientLayer.frame = self.bounds;
     gradientLayer.backgroundColor = [UIColor clearColor].CGColor;
     [self.layer addSublayer:gradientLayer];
@@ -122,7 +128,7 @@
     gressLayer.strokeColor = [UIColor blueColor].CGColor;
     gressLayer.fillColor = [UIColor clearColor].CGColor;
     gressLayer.lineCap = @"bevel";
-    gressLayer.path = insetArcPath.CGPath;
+    gressLayer.path = insideArcPath.CGPath;
     gradientLayer.mask = gressLayer;
     
     CABasicAnimation *ani = [ CABasicAnimation animationWithKeyPath : NSStringFromSelector ( @selector (strokeEnd))];
@@ -147,16 +153,15 @@
 }
 
 - (void)setCircleColor:(UIColor *)circleColor{
-    _circleLayer.strokeColor = circleColor.CGColor;
-    [self.layer addSublayer:_circleLayer];
+    _outerCircleLayer.strokeColor = circleColor.CGColor;
 }
 
 - (void)setOuterCircleColor:(UIColor *)outerCircleColor{
-    _circleLayer.strokeColor = outerCircleColor.CGColor;
+    _outerCircleLayer.strokeColor = outerCircleColor.CGColor;
 }
 
 - (void)setOuterCircleWidth:(CGFloat)outerCircleWidth{
-    _circleLayer.lineWidth = outerCircleWidth;
+    _outerCircleLayer.lineWidth = outerCircleWidth;
 }
 
 - (void)setValueTitle:(NSString *)valueTitle{
@@ -183,6 +188,17 @@
     }
 }
 
+- (void)setSingleColor:(UIColor *)singleColor{
+    _insideCircleLayer.strokeColor = singleColor.CGColor;
+    [_gradientLayer removeFromSuperlayer];
+    
+    CABasicAnimation *ani = [ CABasicAnimation animationWithKeyPath : NSStringFromSelector ( @selector (strokeEnd))];
+    ani.fromValue = @0;
+    ani.toValue = @1;
+    ani.duration = 1.0;
+    [_insideCircleLayer addAnimation:ani forKey:NSStringFromSelector(@selector(strokeEnd))];
+}
+
 - (void)setMarkCount:(int)markCount{
 
     for (int i = 0; i < markCount; i ++) {
@@ -195,31 +211,11 @@
         
         CGFloat centerX = 0.0;
         CGFloat centerY = 0.0;
-        CGFloat margin = 0.0;
         CGFloat half = label.frame.size.width / 2;
-        CGFloat firstLCX = (_width - _radius * 2) / 2 - 5 - half;
         CGFloat radius = _radius + 5 + half;
-        CGFloat markRadius = half + 10 + _halfWidth;
-        
-        margin = i * ((_radius * 2 + 5 * 2 + half * 2) / (markCount - 1));
-        centerX = firstLCX + margin;
-        
-        centerY = self.frame.size.height - (sqrt(radius * radius - (centerX - self.frame.size.width / 2) * (centerX - self.frame.size.width / 2)) + self.frame.size.height / 2);
-
-        
-        if (i < markCount / 2 && i != 0 && i != markCount - 1) {
-            CGFloat CX = centerX - markRadius;
-            centerX -= (centerX - CX) / 2;
-
-            centerY = self.frame.size.height - (sqrt(radius * radius - (centerX - self.frame.size.width / 2) * (centerX - self.frame.size.width / 2)) + self.frame.size.height / 2);
-        }
-
-        if ((i > markCount / 2 && i != 0 && i != markCount - 1) || (markCount % 2 == 0 && i == markCount / 2)) {
-            CGFloat CX = centerX + markRadius;
-            centerX += (CX - centerX) / 2;
-            centerY = self.frame.size.height - (sqrt(radius * radius - (centerX - self.frame.size.width / 2) * (centerX - self.frame.size.width / 2)) + self.frame.size.height / 2);
-        }
-        
+        CGFloat a = 180 / (markCount - 1) * i;
+        centerX = _width / 2 - radius *  cos(a * M_PI / 180);
+        centerY = self.frame.size.height / 2  - radius * sin(a * M_PI / 180   );
         label.center = CGPointMake(centerX, centerY);
         
         if (i == 0) {
@@ -229,6 +225,28 @@
         } else{
             label.text = [NSString stringWithFormat:@"%.0f",_maxValue / (markCount - 1) * i];
         }
+
+//        margin = i * ((_radius * 2 + 5 * 2 + half * 2) / (markCount - 1));
+//        centerX = firstLCX + margin;
+//        
+//        centerY = self.frame.size.height - (sqrt(radius * radius - (centerX - self.frame.size.width / 2) * (centerX - self.frame.size.width / 2)) + self.frame.size.height / 2);
+//
+//        
+//        if (i < markCount / 2 && i != 0 && i != markCount - 1) {
+//            CGFloat CX = centerX - markRadius;
+//            centerX -= (centerX - CX) / 2;
+//
+//            centerY = self.frame.size.height - (sqrt(radius * radius - (centerX - self.frame.size.width / 2) * (centerX - self.frame.size.width / 2)) + self.frame.size.height / 2);
+//        }
+//
+//        if ((i > markCount / 2 && i != 0 && i != markCount - 1) || (markCount % 2 == 0 && i == markCount / 2)) {
+//            CGFloat CX = centerX + markRadius;
+//            centerX += (CX - centerX) / 2;
+//            centerY = self.frame.size.height - (sqrt(radius * radius - (centerX - self.frame.size.width / 2) * (centerX - self.frame.size.width / 2)) + self.frame.size.height / 2);
+//        }
+//        
+//        label.center = CGPointMake(centerX, centerY);
+//        
     }
 }
 

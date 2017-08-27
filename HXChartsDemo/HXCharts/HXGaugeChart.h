@@ -29,4 +29,6 @@
 @property (nonatomic, strong) UIColor *outerCircleColor;
 ///外圆线宽
 @property (nonatomic, assign) CGFloat outerCircleWidth;
+///单色
+@property (nonatomic, strong) UIColor *singleColor;
 @end
