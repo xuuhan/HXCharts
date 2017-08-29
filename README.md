@@ -115,3 +115,5 @@ HXLineChart *line = [[HXLineChart alloc] initWithFrame:CGRectMake(lineChartX, li
 # 说明
 
 demo中颜色使用的是渐变色，也可以选择单色，更多属性请去.h文件里看
+
+有任何建议欢迎+QQ152882888 一起讨论
