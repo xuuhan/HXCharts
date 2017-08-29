@@ -116,4 +116,6 @@ HXLineChart *line = [[HXLineChart alloc] initWithFrame:CGRectMake(lineChartX, li
 
 demo中颜色使用的是渐变色，也可以选择单色，更多属性请去.h文件里看
 
+demo中内附16进制颜色转三原色方法
+
 有任何建议欢迎+QQ152882888 一起讨论
