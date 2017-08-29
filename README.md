@@ -22,11 +22,13 @@ HXCharts包括了仪表盘、柱状图、圆形图、折线图等四种绘图。
 
 #使用
 
+![image](https://github.com/xuuhan/HXCharts/blob/master/xx1.gif)
+
 * 导入头文件
 
-'''
+```
 #import "HXCharts.h"
-'''
+```
 
 
 
