@@ -72,6 +72,7 @@ HXCharts包括了仪表盘、柱状图、圆形图、折线图等四种绘图。
 * 传入文字数组
 * 传入对应值数组
 * 传入柱子颜色数组与背景线颜色(默认灰色)
+* 要修改柱子的宽度需要去.m文件中修改_margin(柱子间间距)的值
 
 ```
         HXBarChart *bar = [[HXBarChart alloc] initWithFrame:CGRectMake(barChartX, barChartY, barChartWidth, barChartHeight) withMarkLabelCount:6 withOrientationType:OrientationHorizontal];
