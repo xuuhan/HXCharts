@@ -81,12 +81,31 @@
         
         bar.locations = @[@0.15,@.85];
         
+        bar.backgroundLineColor = [self colorWithHexString:@"#4b4e52" alpha:1];
+        
         [self.view addSubview:bar];
         
     } else if (index == 3){///折线图
+        CGFloat lineChartWidth = self.view.frame.size.width * 0.95;
+        CGFloat lineChartHeight = self.view.frame.size.height * 0.3;
         
+        CGFloat lineChartX = (width - lineChartWidth) / 2 - 20;
+        CGFloat lineChartY = (height - lineChartHeight) / 2;
+        
+        HXLineChart *line = [[HXLineChart alloc] initWithFrame:CGRectMake(lineChartX, lineChartY, lineChartWidth, lineChartHeight)];
+        
+        [line setTitleArray:@[@"星期一",@"星期二",@"星期三",@"星期四",@"星期五",@"星期六",@"星期日"]];
+        
+        [line setValue:@[@11,@44,@193,@57,@66,@144,@156] withYLineCount:6];
+        
+        line.lineColor = [self colorWithHexString:@"#43befa" alpha:1];
+        
+        line.fillColor = [self colorWithHexString:@"#2e3f53" alpha:0.5];
+        
+        line.backgroundLineColor = [self colorWithHexString:@"#4b4e52" alpha:1];
+        
+        [self.view addSubview:line];
     }
-
 }
 
 #pragma mark 设置16进制颜色

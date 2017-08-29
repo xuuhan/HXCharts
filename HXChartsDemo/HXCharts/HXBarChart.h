@@ -39,4 +39,6 @@ typedef NS_ENUM(NSInteger, OrientationType) {
 ///标注值
 @property (nonatomic, weak) UIColor *markTextColor;
 @property (nonatomic, weak) UIFont *markTextFont;
+///背景线颜色
+@property (nonatomic, weak) UIColor *backgroundLineColor;
 @end

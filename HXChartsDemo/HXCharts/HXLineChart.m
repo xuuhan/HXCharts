@@ -12,11 +12,8 @@
 @property(nonatomic,strong)NSArray* colors;
 @property(nonatomic,assign)BOOL pathCurve;
 
-@property (nonatomic, strong) CAShapeLayer *lineLayer;
-@property (nonatomic, strong) CAShapeLayer *xlineLayer;
-@property (nonatomic, strong) CAShapeLayer *ylineLayer;
-
-@property (nonatomic, strong) CAGradientLayer *colorLayer;
+@property (nonatomic, strong) CAShapeLayer *colorLayer;
+@property (nonatomic, strong) CAShapeLayer *fillLayer;
 
 @property (nonatomic, assign) CGFloat margin;
 @property (nonatomic, assign) CGFloat x;
@@ -30,6 +27,9 @@
 @property (nonatomic, assign) CGFloat maxChar;
 @property (nonatomic, assign) int maxValue;
 @property (nonatomic, assign) int valueLength;
+
+@property (nonatomic, strong) NSMutableArray *markLabelArray;
+@property (nonatomic, strong) NSMutableArray *lineLayerArray;
 @end
 @implementation HXLineChart
 
@@ -51,7 +51,6 @@
     _titleCount = (int)titleArray.count;
     
     CAShapeLayer *lineLayer= [self creatCAShapeLayer];
-    _xlineLayer = lineLayer;
     UIBezierPath *linePath = [UIBezierPath bezierPath];
     
     for (int i = 0; i < titleArray.count; i++) {
@@ -69,6 +68,7 @@
     for (int i = 0; i < titleArray.count; i++) {
         UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(_x + _margin + (_lineWidth - _margin * 2) / (titleArray.count - 1) * i - _titleWidth / 2, _lineHeight + 5, _titleWidth, _titleHeight)];
         [self addSubview:titleLabel];
+        [self.markLabelArray addObject:titleLabel];
         titleLabel.textColor = [UIColor whiteColor];
         titleLabel.font = [UIFont systemFontOfSize:12];
         titleLabel.text = titleArray[i];
@@ -97,7 +97,6 @@
     }
     
     CAShapeLayer *lineLayer= [self creatCAShapeLayer];
-    _ylineLayer = lineLayer;
     
     UIBezierPath *linePath = [UIBezierPath bezierPath];
     for (int i = 1; i < count - 1; i++) {
@@ -107,13 +106,14 @@
     
     lineLayer.path = linePath.CGPath;
     [self.layer addSublayer:lineLayer];
-
+    
     CGFloat valueHeight = 20;
     CGFloat valueWidth = _x - 10;
     
     for (int i = 0; i < count; i++) {
         UILabel *valueLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, i * (_lineHeight / (count - 1)) - valueHeight / 2, valueWidth, valueHeight)];
         [self addSubview:valueLabel];
+        [self.markLabelArray addObject:valueLabel];
         valueLabel.textColor = [UIColor whiteColor];
         valueLabel.font = [UIFont systemFontOfSize:12];
         valueLabel.textAlignment = NSTextAlignmentRight;
@@ -133,12 +133,14 @@
     
     ///折线图
     CAShapeLayer *lineChartLayer = [CAShapeLayer layer];
+    _colorLayer = lineChartLayer;
     lineChartLayer.fillColor= [UIColor clearColor].CGColor;
-    lineChartLayer.strokeColor = [self colorWithHexString:@"#43befa" alpha:1].CGColor;
+    lineChartLayer.strokeColor = [UIColor blackColor].CGColor;
     lineChartLayer.lineWidth = 2;
     
     CAShapeLayer *fillChartLayer = [CAShapeLayer layer];
-    fillChartLayer.fillColor= fillChartLayer.strokeColor = [self colorWithHexString:@"#2e3f53" alpha:0.5].CGColor;
+    _fillLayer = fillChartLayer;
+    fillChartLayer.fillColor= fillChartLayer.strokeColor = [UIColor clearColor].CGColor;
     fillChartLayer.strokeColor = [UIColor clearColor].CGColor;
     fillChartLayer.lineWidth = 1;
     
@@ -158,25 +160,25 @@
         [path addLineToPoint:CGPointMake(_x + _margin + (_lineWidth - _margin * 2) / (_titleCount - 1) * i,_lineHeight - _lineHeight * [valueArray[i] floatValue] / _maxValue)];
         
         if (i == valueArray.count - 1) {
-        [lPath addLineToPoint:CGPointMake(_width,_lineHeight - _lineHeight * [valueArray[i] floatValue] / _maxValue)];
-        [path addLineToPoint:CGPointMake(_width,_lineHeight - _lineHeight * [valueArray[i] floatValue] / _maxValue)];
-        [path addLineToPoint:CGPointMake(_width,_lineHeight)];
-        [path addLineToPoint:CGPointMake(_x,_lineHeight)];
-        [path moveToPoint:CGPointMake(_x, _lineHeight - _lineHeight * ([valueArray[0] floatValue] / _maxValue))];
+            [lPath addLineToPoint:CGPointMake(_width,_lineHeight - _lineHeight * [valueArray[i] floatValue] / _maxValue)];
+            [path addLineToPoint:CGPointMake(_width,_lineHeight - _lineHeight * [valueArray[i] floatValue] / _maxValue)];
+            [path addLineToPoint:CGPointMake(_width,_lineHeight)];
+            [path addLineToPoint:CGPointMake(_x,_lineHeight)];
+            [path moveToPoint:CGPointMake(_x, _lineHeight - _lineHeight * ([valueArray[0] floatValue] / _maxValue))];
         }
     }
     
     lineChartLayer.path = lPath.CGPath;
     [self.layer addSublayer:lineChartLayer];
     fillChartLayer.path = path.CGPath;
-//    [self.layer addSublayer:fillChartLayer];
+    
     
     CABasicAnimation *ani = [ CABasicAnimation animationWithKeyPath : NSStringFromSelector ( @selector (strokeEnd))];
     ani.fromValue = @0;
     ani.toValue = @1;
     ani.duration = 1.0;
     [lineChartLayer addAnimation:ani forKey:NSStringFromSelector(@selector(strokeEnd))];
-
+    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.layer addSublayer:fillChartLayer];
     });
@@ -186,7 +188,7 @@
 -(void)drawLine
 {
     CAShapeLayer *lineLayer= [self creatCAShapeLayer];
-    _lineLayer = lineLayer;
+    [self.lineLayerArray addObject:lineLayer];
     
     _margin = 20.0;
     _x = 60;
@@ -208,9 +210,10 @@
 
 - (CAShapeLayer *)creatCAShapeLayer{
     CAShapeLayer *lineLayer= [CAShapeLayer layer];
-    lineLayer.fillColor = [UIColor clearColor].CGColor;//填充颜色为ClearColor
+    [self.lineLayerArray addObject:lineLayer];
+    lineLayer.fillColor = [UIColor clearColor].CGColor;
     lineLayer.lineWidth = 1.0f;
-    lineLayer.strokeColor = [self colorWithHexString:@"#4b4e52" alpha:1].CGColor;
+    lineLayer.strokeColor = [UIColor grayColor].CGColor;
     
     return lineLayer;
 }
@@ -228,51 +231,46 @@
     [self maxValue:v];
 }
 
-#pragma mark 设置16进制颜色
-- (UIColor *)colorWithHexString:(NSString *)color alpha:(CGFloat)alpha{
-    //删除字符串中的空格
-    NSString *cString = [[color stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];
-    // String should be 6 or 8 characters
-    if ([cString length] < 6)
-    {
-        return [UIColor clearColor];
+- (void)setMarkTextFont:(UIFont *)markTextFont{
+    for (UILabel *label in _markLabelArray) {
+        label.font = markTextFont;
     }
-    // strip 0X if it appears
-    //如果是0x开头的，那么截取字符串，字符串从索引为2的位置开始，一直到末尾
-    if ([cString hasPrefix:@"0X"])
-    {
-        cString = [cString substringFromIndex:2];
-    }
-    //如果是#开头的，那么截取字符串，字符串从索引为1的位置开始，一直到末尾
-    if ([cString hasPrefix:@"#"])
-    {
-        cString = [cString substringFromIndex:1];
-    }
-    if ([cString length] != 6)
-    {
-        return [UIColor clearColor];
-    }
-    
-    // Separate into r, g, b substrings
-    NSRange range;
-    range.location = 0;
-    range.length = 2;
-    //r
-    NSString *rString = [cString substringWithRange:range];
-    //g
-    range.location = 2;
-    NSString *gString = [cString substringWithRange:range];
-    //b
-    range.location = 4;
-    NSString *bString = [cString substringWithRange:range];
-    
-    // Scan values
-    unsigned int r, g, b;
-    [[NSScanner scannerWithString:rString] scanHexInt:&r];
-    [[NSScanner scannerWithString:gString] scanHexInt:&g];
-    [[NSScanner scannerWithString:bString] scanHexInt:&b];
-    return [UIColor colorWithRed:((float)r / 255.0f) green:((float)g / 255.0f) blue:((float)b / 255.0f) alpha:alpha];
-    
 }
+
+- (void)setMarkTextColor:(UIColor *)markTextColor{
+    for (UILabel *label in _markLabelArray) {
+        label.textColor = markTextColor;
+    }
+}
+
+- (void)setLineColor:(UIColor *)lineColor{
+    _colorLayer.strokeColor = lineColor.CGColor;
+}
+
+-(void)setFillColor:(UIColor *)fillColor{
+    _fillLayer.fillColor = fillColor.CGColor;
+}
+
+-(void)setBackgroundLineColor:(UIColor *)backgroundLineColor{
+    for (CAShapeLayer *layer in _lineLayerArray) {
+        layer.strokeColor = backgroundLineColor.CGColor;
+    }
+}
+
+
+- (NSMutableArray *)markLabelArray{
+    if (!_markLabelArray) {
+        _markLabelArray = [NSMutableArray array];
+    }
+    return _markLabelArray;
+}
+
+- (NSMutableArray *)lineLayerArray{
+    if (!_lineLayerArray) {
+        _lineLayerArray = [NSMutableArray array];
+    }
+    return _lineLayerArray;
+}
+
 
 @end

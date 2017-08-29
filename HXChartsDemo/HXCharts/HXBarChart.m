@@ -15,6 +15,7 @@
 @property (nonatomic, strong) NSMutableArray *markLabelArray;
 @property (nonatomic, strong) NSMutableArray *gradientLayerArray;
 @property (nonatomic, strong) NSMutableArray *singleColorLayer;
+
 @property (nonatomic, assign) CGFloat x;
 @property (nonatomic, assign) CGFloat height;
 @property (nonatomic, assign) CGFloat width;
@@ -253,7 +254,7 @@
     _lineLayer = lineLayer;
     lineLayer.fillColor = [UIColor clearColor].CGColor;//填充颜色为ClearColor
     lineLayer.lineWidth = 1.0f;
-    lineLayer.strokeColor = [UIColor colorWithRed:71.0/255.0 green:74.0/255.0 blue:79.0/255.0 alpha:1].CGColor;
+    lineLayer.strokeColor = [UIColor grayColor].CGColor;
     
     _height = self.frame.size.height;
     _width = self.frame.size.width;
@@ -362,6 +363,10 @@
     }
 }
 
+- (void)setBackgroundLineColor:(UIColor *)backgroundLineColor{
+    _lineLayer.strokeColor = backgroundLineColor.CGColor;
+}
+
 - (NSMutableArray *)colorLayerArray{
     if (!_colorLayerArray) {
         _colorLayerArray = [NSMutableArray array];
@@ -389,5 +394,6 @@
     }
     return _singleColorLayer;
 }
+
 
 @end
