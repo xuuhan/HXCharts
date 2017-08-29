@@ -176,15 +176,15 @@
     _valueLabel.textColor = valueColor;
 }
 
-- (void)setMarkColor:(UIColor *)markColor{
+- (void)setMarkTextColor:(UIColor *)markTextColor{
     for (UILabel *label in _markLabelArray) {
-        label.textColor = markColor;
+        label.textColor = markTextColor;
     }
 }
 
-- (void)setMarkFont:(UIFont *)markFont{
+- (void)setMarkTextFont:(UIFont *)markTextFont{
     for (UILabel *label in _markLabelArray) {
-        label.font = markFont;
+        label.font = markTextFont;
     }
 }
 
@@ -199,54 +199,33 @@
     [_insideCircleLayer addAnimation:ani forKey:NSStringFromSelector(@selector(strokeEnd))];
 }
 
-- (void)setMarkCount:(int)markCount{
+- (void)setMarkLabelCount:(int)markLabelCount{
 
-    for (int i = 0; i < markCount; i ++) {
+    for (int i = 0; i < markLabelCount; i ++) {
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 30, 20)];
         [self addSubview:label];
         [self.markLabelArray addObject:label];
         label.font = [UIFont systemFontOfSize:12];
         label.textColor = [UIColor whiteColor];
         label.textAlignment = NSTextAlignmentCenter;
+
         
         CGFloat centerX = 0.0;
         CGFloat centerY = 0.0;
         CGFloat half = label.frame.size.width / 2;
         CGFloat radius = _radius + 5 + half;
-        CGFloat a = 180 / (markCount - 1) * i;
+        CGFloat a = 180 / (markLabelCount - 1) * i;
         centerX = _width / 2 - radius *  cos(a * M_PI / 180);
         centerY = self.frame.size.height / 2  - radius * sin(a * M_PI / 180   );
         label.center = CGPointMake(centerX, centerY);
         
         if (i == 0) {
             label.text = @"0";
-        } else if (i == markCount - 1){
+        } else if (i == markLabelCount - 1){
             label.text = [NSString stringWithFormat:@"%.0f",_maxValue];
         } else{
-            label.text = [NSString stringWithFormat:@"%.0f",_maxValue / (markCount - 1) * i];
+            label.text = [NSString stringWithFormat:@"%.0f",_maxValue / (markLabelCount - 1) * i];
         }
-
-//        margin = i * ((_radius * 2 + 5 * 2 + half * 2) / (markCount - 1));
-//        centerX = firstLCX + margin;
-//        
-//        centerY = self.frame.size.height - (sqrt(radius * radius - (centerX - self.frame.size.width / 2) * (centerX - self.frame.size.width / 2)) + self.frame.size.height / 2);
-//
-//        
-//        if (i < markCount / 2 && i != 0 && i != markCount - 1) {
-//            CGFloat CX = centerX - markRadius;
-//            centerX -= (centerX - CX) / 2;
-//
-//            centerY = self.frame.size.height - (sqrt(radius * radius - (centerX - self.frame.size.width / 2) * (centerX - self.frame.size.width / 2)) + self.frame.size.height / 2);
-//        }
-//
-//        if ((i > markCount / 2 && i != 0 && i != markCount - 1) || (markCount % 2 == 0 && i == markCount / 2)) {
-//            CGFloat CX = centerX + markRadius;
-//            centerX += (CX - centerX) / 2;
-//            centerY = self.frame.size.height - (sqrt(radius * radius - (centerX - self.frame.size.width / 2) * (centerX - self.frame.size.width / 2)) + self.frame.size.height / 2);
-//        }
-//        
-//        label.center = CGPointMake(centerX, centerY);
-//        
     }
 }
 

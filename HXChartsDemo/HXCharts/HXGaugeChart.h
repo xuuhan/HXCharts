@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-
 @interface HXGaugeChart : UIView
 
 ///初始化方法
@@ -22,9 +21,9 @@
 ///渐变色数组所占位置
 @property (nonatomic, strong) NSArray *locations;
 ///要显示的标注个数
-@property (nonatomic, assign) int markCount;
-@property (nonatomic, weak) UIColor *markColor;
-@property (nonatomic, weak) UIFont *markFont;
+@property (nonatomic, assign) int markLabelCount;
+@property (nonatomic, weak) UIColor *markTextColor;
+@property (nonatomic, weak) UIFont *markTextFont;
 ///外圆颜色
 @property (nonatomic, strong) UIColor *outerCircleColor;
 ///外圆线宽
