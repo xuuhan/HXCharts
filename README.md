@@ -1,5 +1,4 @@
-HXCharts
-========
+# HXCharts
 
 HXCharts包括了仪表盘、柱状图、圆形图、折线图等四种绘图。
 
@@ -12,5 +11,22 @@ HXCharts包括了仪表盘、柱状图、圆形图、折线图等四种绘图。
 下面是在项目中使用HXCharts的实际效果:
 
 ![image](https://github.com/xuuhan/HXCharts/blob/master/xx.gif)
+
+# 语言
+
+* Objective-C
+
+# 安装
+
+* 下载demo，将HXcharts文件夹拖入到自己项目中
+
+#使用
+
+* 导入头文件
+
+'''
+#import "HXCharts.h"
+'''
+
 
 
