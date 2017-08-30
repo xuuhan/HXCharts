@@ -252,7 +252,7 @@
     
     CAShapeLayer *lineLayer= [CAShapeLayer layer];
     _lineLayer = lineLayer;
-    lineLayer.fillColor = [UIColor clearColor].CGColor;//填充颜色为ClearColor
+    lineLayer.fillColor = [UIColor clearColor].CGColor;
     lineLayer.lineWidth = 1.0f;
     lineLayer.strokeColor = [UIColor grayColor].CGColor;
     
