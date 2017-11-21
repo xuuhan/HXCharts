@@ -26,6 +26,7 @@
     
     tv.delegate = self;
     tv.dataSource = self;
+    
 }
 
 
@@ -63,7 +64,6 @@
     demo.index = indexPath.row;
     
     [self.navigationController pushViewController:demo animated:YES];
-
 }
 
 @end

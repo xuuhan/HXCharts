@@ -40,6 +40,7 @@
                              [self colorWithHexString:@"#ff9500" alpha:1],
                              [self colorWithHexString:@"#ff4e65" alpha:1]];
         gauge.locations = @[@0.15,@0.4,@0.65,@0.8];
+        
         gauge.markLabelCount = 5;
         
         [self.view addSubview:gauge];
@@ -71,7 +72,7 @@
         NSArray *color6 = @[[self colorWithHexString:@"#FC5592" alpha:1],[self colorWithHexString:@"#E34C83" alpha:1]];
         
         
-        HXBarChart *bar = [[HXBarChart alloc] initWithFrame:CGRectMake(barChartX, barChartY, barChartWidth, barChartHeight) withMarkLabelCount:6 withOrientationType:OrientationHorizontal];
+        HXBarChart *bar = [[HXBarChart alloc] initWithFrame:CGRectMake(barChartX, barChartY, barChartWidth, barChartHeight) withMarkLabelCount:6 withOrientationType:OrientationVertical];
         
         bar.titleArray = @[@"一月",@"二月",@"三月",@"四月",@"五月",@"六月"];
         
@@ -96,7 +97,7 @@
         
         [line setTitleArray:@[@"星期一",@"星期二",@"星期三",@"星期四",@"星期五",@"星期六",@"星期日"]];
         
-        [line setValue:@[@11,@44,@193,@57,@66,@144,@156] withYLineCount:6];
+        [line setValue:@[@-267,@-66,@-73,@160,@-24,@-30,@140] withYLineCount:6];
         
         line.lineColor = [self colorWithHexString:@"#43befa" alpha:1];
         
