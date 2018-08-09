@@ -119,6 +119,25 @@ HXLineChart *line = [[HXLineChart alloc] initWithFrame:CGRectMake(lineChartX, li
         [self.view addSubview:line];
 ```
 
+## 环形图
+
+* 初始化传入frame与标注值相对于图标的方位，MarkViewDirectionNone则不显示标注值
+* 传入frame
+* 传入颜色数组
+* 传入数值数组
+* 传入文字数组
+* 调用绘图方法
+```
+HXRingChart *ring = [[HXRingChart alloc] initWithFrame:CGRectMake(ringChartX, ringChartY, ringChartWidth, ringChartHeight) markViewDirection:MarkViewDirectionRight];
+        [self.view addSubview:ring];
+        ring.colorArray = colorArray;
+        ring.valueArray = valueArray;
+        ring.titleArray = titleArray;
+        ring.ringWidth = 20.0;
+        ring.title = @"总计";
+        [ring drawArc];
+```
+
 # 说明
 
 demo中颜色使用的是渐变色，也可以选择单色，更多属性请去.h文件里看
