@@ -123,7 +123,7 @@ HXLineChart *line = [[HXLineChart alloc] initWithFrame:CGRectMake(lineChartX, li
 
 ## 环形图
 
-* 初始化传入frame与标注值相对于图标的方位，MarkViewDirectionNone则不显示标注值
+* 初始化传入frame与标注值相对于图标的方位，MarkViewDirectionNone则不显示标注值，图表居中
 * 传入frame
 * 传入颜色数组
 * 传入数值数组
