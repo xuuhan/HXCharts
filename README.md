@@ -14,7 +14,7 @@ HXCharts包括了仪表盘、柱状图、圆形图、折线图、环形图等五
 
 下面是在项目中使用HXCharts的实际效果:
 
-![image](https://github.com/xuuhan/HXCharts/blob/master/hx.gif)
+![image](https://github.com/xuuhan/HXCharts/blob/master/xx.gif)
 
 # 语言
 
@@ -30,7 +30,7 @@ HXCharts包括了仪表盘、柱状图、圆形图、折线图、环形图等五
 
 # 使用
 
-![image](https://github.com/xuuhan/HXCharts/blob/master/xx1.gif)
+![image](https://github.com/xuuhan/HXCharts/blob/master/hx.gif)
 
 * 导入头文件
 
