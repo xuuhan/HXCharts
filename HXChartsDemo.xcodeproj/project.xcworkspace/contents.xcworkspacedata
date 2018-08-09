@@ -2,12 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:../HXChartsDemo/HXCharts/HXRingChart.h">
-   </FileRef>
-   <FileRef
-      location = "group:../HXChartsDemo/HXCharts/HXRingChart.m">
-   </FileRef>
-   <FileRef
       location = "self:">
    </FileRef>
 </Workspace>
