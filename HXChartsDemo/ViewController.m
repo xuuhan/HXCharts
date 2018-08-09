@@ -32,7 +32,7 @@
 
 #pragma mark UITableViewDataSource UITableViewDelegate
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 4;
+    return 5;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -53,6 +53,10 @@
             
         case 3:
             cell.textLabel.text = @"折线图";
+            break;
+            
+        case 4:
+            cell.textLabel.text = @"环形图";
             break;
     }
     return cell;

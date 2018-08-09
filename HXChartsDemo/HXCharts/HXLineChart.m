@@ -69,7 +69,6 @@
     lineLayer.path = linePath.CGPath;
     [self.layer addSublayer:lineLayer];
     
-    
     _titleHeight = (_height - _lineHeight - 5);
     _titleWidth = (_lineWidth / titleArray.count);
     
@@ -92,10 +91,11 @@
     }
     
     _valueCount = count;
-    
+
     ///最大值
     int maxValueAtArray = [[valueArray valueForKeyPath:@"@max.intValue"] intValue];
     int minValueAtArray = [[valueArray valueForKeyPath:@"@min.intValue"] intValue];
+    
     if (maxValueAtArray == 0 && minValueAtArray == 0) {
         return;
     }
@@ -107,7 +107,9 @@
     for (int i = 0; i < _maxValueLength - 1; i++) {
         _maxValue = _maxValue * 10;
     }
-    }
+}
+    
+    NSLog(@"-------%d",_maxValue);
     ///最小值
     if (minValueAtArray >= 0) {
         minValueAtArray = 0;
@@ -138,6 +140,7 @@
                     break;
                 }
             }
+
         } else{
             _direction = @"middle";
             _average = _maxValue / 5;
@@ -249,6 +252,7 @@
         [path addLineToPoint:CGPointMake(_x + _margin + (_lineWidth - _margin * 2) / (_titleCount - 1) * i,_lineHeight - _lineHeight * [valueArray[i] floatValue] / _maxValue)];
 
         if (i == valueArray.count - 1) {
+            
             [lPath addLineToPoint:CGPointMake(_width,_lineHeight - _lineHeight * [valueArray[i] floatValue] / _maxValue)];
             [path addLineToPoint:CGPointMake(_width,_lineHeight - _lineHeight * [valueArray[i] floatValue] / _maxValue)];
             [path addLineToPoint:CGPointMake(_width,_lineHeight)];
@@ -418,7 +422,6 @@
         layer.strokeColor = backgroundLineColor.CGColor;
     }
 }
-
 
 - (NSMutableArray *)markLabelArray{
     if (!_markLabelArray) {

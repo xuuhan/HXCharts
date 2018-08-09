@@ -8,6 +8,7 @@
 
 #import "demoViewController.h"
 #import "HXCharts.h"
+#import "HXRingChart.h"
 
 @interface demoViewController ()
 
@@ -71,12 +72,11 @@
         NSArray *color5 = @[[self colorWithHexString:@"#606AED" alpha:1],[self colorWithHexString:@"#565FD5" alpha:1]];
         NSArray *color6 = @[[self colorWithHexString:@"#FC5592" alpha:1],[self colorWithHexString:@"#E34C83" alpha:1]];
         
-        
         HXBarChart *bar = [[HXBarChart alloc] initWithFrame:CGRectMake(barChartX, barChartY, barChartWidth, barChartHeight) withMarkLabelCount:6 withOrientationType:OrientationVertical];
         
         bar.titleArray = @[@"一月",@"二月",@"三月",@"四月",@"五月",@"六月"];
         
-        bar.valueArray = @[@"34",@"72",@"260",@"44",@"180",@"53"];
+        bar.valueArray = @[@"15",@"27",@"13",@"42",@"34",@"2"];
         
         bar.colorArray = @[color1,color2,color3,color4,color5,color6];
         
@@ -97,7 +97,7 @@
         
         [line setTitleArray:@[@"星期一",@"星期二",@"星期三",@"星期四",@"星期五",@"星期六",@"星期日"]];
         
-        [line setValue:@[@-267,@-66,@-73,@160,@-24,@-30,@140] withYLineCount:6];
+        [line setValue:@[@13,@30,@52,@73,@91,@34,@25] withYLineCount:6];
         
         line.lineColor = [self colorWithHexString:@"#43befa" alpha:1];
         
@@ -106,6 +106,31 @@
         line.backgroundLineColor = [self colorWithHexString:@"#4b4e52" alpha:1];
         
         [self.view addSubview:line];
+    } else if (index == 4){///环形图
+        CGFloat ringChartWidth = width * 0.5;
+        CGFloat ringChartHeight = height * 0.4;
+        CGFloat ringChartX = (width - ringChartWidth) / 2;
+        CGFloat ringChartY = (height - ringChartHeight) / 2;
+        
+        NSArray *colorArray = @[[self colorWithHexString:@"#007aff" alpha:1],
+                                [self colorWithHexString:@"#3ed74d" alpha:1],
+                                [self colorWithHexString:@"#ff9304" alpha:1],
+                                [self colorWithHexString:@"#c22efb" alpha:1],
+                                [self colorWithHexString:@"#93a8ff" alpha:1],
+                                [self colorWithHexString:@"#fcd640" alpha:1]];
+        
+        NSArray *valueArray = @[@13,@30,@52,@73,@91,@34];
+        NSArray *titleArray = @[@"一月",@"二月",@"三月",@"四月",@"五月",@"六月"];
+        
+        HXRingChart *ring = [[HXRingChart alloc] initWithFrame:CGRectMake(ringChartX, ringChartY, ringChartWidth, ringChartHeight) markViewDirection:MarkViewDirectionRight];
+        [self.view addSubview:ring];
+        ring.colorArray = colorArray;
+        ring.valueArray = valueArray;
+        ring.titleArray = titleArray;
+        ring.ringWidth = 20.0;
+        ring.title = @"总计";
+        [ring drawArc];
+        
     }
 }
 

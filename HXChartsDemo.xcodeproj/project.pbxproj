@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D8227EB520FE40230000DBCB /* HXRingChart.m in Sources */ = {isa = PBXBuildFile; fileRef = D8227EB420FE40230000DBCB /* HXRingChart.m */; };
 		D8344BB61F4DC155000E541B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D8344BB51F4DC155000E541B /* main.m */; };
 		D8344BB91F4DC155000E541B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D8344BB81F4DC155000E541B /* AppDelegate.m */; };
 		D8344BBC1F4DC155000E541B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D8344BBB1F4DC155000E541B /* ViewController.m */; };
@@ -40,6 +41,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D8227EB320FE40230000DBCB /* HXRingChart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HXRingChart.h; sourceTree = "<group>"; };
+		D8227EB420FE40230000DBCB /* HXRingChart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HXRingChart.m; sourceTree = "<group>"; };
 		D8344BB11F4DC155000E541B /* HXChartsDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HXChartsDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8344BB51F4DC155000E541B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D8344BB71F4DC155000E541B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -171,6 +174,8 @@
 				D8344BED1F4DC218000E541B /* HXGaugeChart.m */,
 				D8344BEE1F4DC218000E541B /* HXLineChart.h */,
 				D8344BEF1F4DC218000E541B /* HXLineChart.m */,
+				D8227EB320FE40230000DBCB /* HXRingChart.h */,
+				D8227EB420FE40230000DBCB /* HXRingChart.m */,
 			);
 			path = HXCharts;
 			sourceTree = "<group>";
@@ -308,6 +313,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8227EB520FE40230000DBCB /* HXRingChart.m in Sources */,
 				D8344BF21F4DC218000E541B /* HXGaugeChart.m in Sources */,
 				D8344BBC1F4DC155000E541B /* ViewController.m in Sources */,
 				D8344BB91F4DC155000E541B /* AppDelegate.m in Sources */,
@@ -549,6 +555,7 @@
 				D8344BE01F4DC155000E541B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D8344BE11F4DC155000E541B /* Build configuration list for PBXNativeTarget "HXChartsDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -557,6 +564,7 @@
 				D8344BE31F4DC155000E541B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D8344BE41F4DC155000E541B /* Build configuration list for PBXNativeTarget "HXChartsDemoUITests" */ = {
 			isa = XCConfigurationList;
@@ -565,6 +573,7 @@
 				D8344BE61F4DC155000E541B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

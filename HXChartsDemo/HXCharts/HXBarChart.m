@@ -82,7 +82,6 @@
             
             [self addSubview:label];
             [self.markLabelArray addObject:label];
-            
             label.textColor = [UIColor whiteColor];
             label.font = [UIFont systemFontOfSize:12];
             label.textAlignment = NSTextAlignmentCenter;
@@ -204,7 +203,7 @@
         }
         
         [self addSubview:label];
-        
+        label.hidden = YES;
         label.textColor = [UIColor whiteColor];
         label.font = [UIFont systemFontOfSize:12];
         label.text = [NSString stringWithFormat:@"%@",valueArray[i]];
@@ -246,6 +245,12 @@
         ani.duration = 1.0;
         [gressLayer addAnimation:ani forKey:NSStringFromSelector(@selector(strokeEnd))];
     }
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        for (UILabel *label in self.markLabelArray) {
+            label.hidden = NO;
+        }
+    });
 }
 
 - (void)drawBar{

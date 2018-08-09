@@ -8,7 +8,7 @@
 
 #import "HXCircleChart.h"
 @interface HXCircleChart()
-@property (nonatomic, weak) UILabel *valueLabel;
+@property (nonatomic, strong) UILabel *valueLabel;
 
 @property (nonatomic, assign) CGFloat value;
 
