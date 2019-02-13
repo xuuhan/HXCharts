@@ -11,5 +11,6 @@
 #import "HXCircleChart.h"
 #import "HXGaugeChart.h"
 #import "HXLineChart.h"
+#import "HXRingChart.h"
 
 
