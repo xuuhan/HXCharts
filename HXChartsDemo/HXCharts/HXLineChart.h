@@ -10,14 +10,6 @@
 
 @interface HXLineChart : UIView
 
-
-/**
- 赋值value
-
- @param valueArray valueArray
- @param count Y轴标注值的个数
- */
-- (void)setValue:(NSArray *)valueArray withYLineCount:(int)count;
 ///x轴文字
 @property (nonatomic, strong) NSArray *titleArray;
 ///标注
@@ -29,4 +21,13 @@
 @property (nonatomic, weak) UIColor *fillColor;
 ///背景线颜色
 @property (nonatomic, weak) UIColor *backgroundLineColor;
+
+/**
+ 赋值value
+ 
+ @param valueArray valueArray
+ @param count Y轴标注值的个数
+ */
+- (void)setValue:(NSArray *)valueArray withYLineCount:(int)count;
+
 @end

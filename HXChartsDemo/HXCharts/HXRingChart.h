@@ -18,14 +18,6 @@ typedef NS_ENUM(NSInteger,MarkViewDirection){
 
 @interface HXRingChart : UIView
 
-/**
- 初始化方法
-
- @param frame 图表frame
- @param markViewDirection 标注View在图表的方向 默认不显示标注View
- @return self
- */
-- (instancetype)initWithFrame:(CGRect)frame markViewDirection:(MarkViewDirection)markViewDirection;
 ///中心文字
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, weak) UIColor *titleColor;
@@ -40,6 +32,17 @@ typedef NS_ENUM(NSInteger,MarkViewDirection){
 @property (nonatomic, strong) NSArray *valueArray;
 ///图表宽
 @property (nonatomic, assign) CGFloat ringWidth;
-///绘图
-- (void)drawArc;
+
+/**
+ 初始化方法
+ 
+ @param frame 图表frame
+ @param markViewDirection 标注View在图表的方向 默认不显示标注View
+ @return self
+ */
+- (instancetype)initWithFrame:(CGRect)frame markViewDirection:(MarkViewDirection)markViewDirection;
+
+///开始绘图
+- (void)drawChart;
+
 @end

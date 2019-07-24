@@ -69,50 +69,7 @@ static const CGFloat eAngle = M_PI * 2;
     }
 }
 
-- (void)setColorArray:(NSArray *)colorArray{
-    _colorArray = colorArray;
-}
-
-- (void)setValueArray:(NSArray *)valueArray{
-    _valueArray = valueArray;
-    [self valueForTotality];
-    
-    _layerArray = [NSMutableArray array];
-    for (int i = 0; i < _valueArray.count; i++) {
-        CGFloat count = [[NSString stringWithFormat:@"%@",_valueArray[i]] floatValue];
-        
-        if (i == 0) {
-            _endAngle = eAngle * (count / _totality) - M_PI_2;
-        } else{
-            _endAngle = _beginAngle + eAngle * (count / _totality);
-        }
-        
-        UIBezierPath *arcPath = [UIBezierPath bezierPathWithArcCenter:_ACenter radius:_radius startAngle:_beginAngle endAngle:_endAngle  clockwise:YES];
-        
-        _beginAngle = _endAngle;
-        
-        CAShapeLayer *shapelayer = [CAShapeLayer layer];
-        
-        shapelayer.lineWidth = 15.0;
-        UIColor *color = _colorArray[i];
-        shapelayer.strokeColor = color.CGColor;
-        shapelayer.fillColor = [UIColor clearColor].CGColor;
-        shapelayer.path = arcPath.CGPath;
-        [self.layer addSublayer:shapelayer];
-        [_layerArray addObject:shapelayer];
-    }
-    
-    _valueLabel = [UILabel new];
-    [self addSubview:_valueLabel];
-    _valueLabel.frame = CGRectMake(_ACenter.x - 50, _ACenter.y , 100, 20);
-    _valueLabel.textColor = [UIColor whiteColor];
-    _valueLabel.font = [UIFont systemFontOfSize:16 weight:0.2];
-    _valueLabel.textAlignment = NSTextAlignmentCenter;
-    _valueLabel.text = [NSString stringWithFormat:@"%.0f",_totality];
-}
-
-
--(void)drawArc
+-(void)drawChart
 {
     if (_markViewDirection) {
         CGFloat x = 0;
@@ -217,5 +174,48 @@ static const CGFloat eAngle = M_PI * 2;
         obj.lineWidth = ringWidth;
     }];
 }
+
+- (void)setColorArray:(NSArray *)colorArray{
+    _colorArray = colorArray;
+}
+
+- (void)setValueArray:(NSArray *)valueArray{
+    _valueArray = valueArray;
+    [self valueForTotality];
+    
+    _layerArray = [NSMutableArray array];
+    for (int i = 0; i < _valueArray.count; i++) {
+        CGFloat count = [[NSString stringWithFormat:@"%@",_valueArray[i]] floatValue];
+        
+        if (i == 0) {
+            _endAngle = eAngle * (count / _totality) - M_PI_2;
+        } else{
+            _endAngle = _beginAngle + eAngle * (count / _totality);
+        }
+        
+        UIBezierPath *arcPath = [UIBezierPath bezierPathWithArcCenter:_ACenter radius:_radius startAngle:_beginAngle endAngle:_endAngle  clockwise:YES];
+        
+        _beginAngle = _endAngle;
+        
+        CAShapeLayer *shapelayer = [CAShapeLayer layer];
+        
+        shapelayer.lineWidth = 15.0;
+        UIColor *color = _colorArray[i];
+        shapelayer.strokeColor = color.CGColor;
+        shapelayer.fillColor = [UIColor clearColor].CGColor;
+        shapelayer.path = arcPath.CGPath;
+        [self.layer addSublayer:shapelayer];
+        [_layerArray addObject:shapelayer];
+    }
+    
+    _valueLabel = [UILabel new];
+    [self addSubview:_valueLabel];
+    _valueLabel.frame = CGRectMake(_ACenter.x - 50, _ACenter.y , 100, 20);
+    _valueLabel.textColor = [UIColor whiteColor];
+    _valueLabel.font = [UIFont systemFontOfSize:16 weight:0.2];
+    _valueLabel.textAlignment = NSTextAlignmentCenter;
+    _valueLabel.text = [NSString stringWithFormat:@"%.0f",_totality];
+}
+
 @end
 

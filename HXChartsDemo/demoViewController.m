@@ -31,29 +31,23 @@
     
     if (index == 0) {///仪表盘
         
-        
         HXGaugeChart *gauge = [[HXGaugeChart alloc] initWithFrame:CGRectMake(x, y, chartWidth, chartWidth) withMaxValue:300 value:225];
-        
+
         gauge.valueTitle = @"225";
         gauge.colorArray = @[[self colorWithHexString:@"#33d24e" alpha:1],
                              [self colorWithHexString:@"#f8e71c" alpha:1],
                              [self colorWithHexString:@"#ff9500" alpha:1],
                              [self colorWithHexString:@"#ff4e65" alpha:1]];
         gauge.locations = @[@0.15,@0.4,@0.65,@0.8];
-        
         gauge.markLabelCount = 5;
-        
         [self.view addSubview:gauge];
+        
     } else if (index == 1){///圆形图
         
         HXCircleChart *circle = [[HXCircleChart alloc] initWithFrame:CGRectMake(x, y, chartWidth, chartWidth) withMaxValue:100 value:85];
-         
         circle.valueTitle = @"85%";
-        
         circle.colorArray = @[[self colorWithHexString:@"#00fec7" alpha:1],[self colorWithHexString:@"#00d8fe" alpha:1]];
-        
         circle.locations = @[@0.15,@0.85];
-        
         [self.view addSubview:circle];
         
     } else if (index == 2){///柱状图
@@ -71,19 +65,21 @@
         NSArray *color5 = @[[self colorWithHexString:@"#606AED" alpha:1],[self colorWithHexString:@"#565FD5" alpha:1]];
         NSArray *color6 = @[[self colorWithHexString:@"#FC5592" alpha:1],[self colorWithHexString:@"#E34C83" alpha:1]];
         
+        
         HXBarChart *bar = [[HXBarChart alloc] initWithFrame:CGRectMake(barChartX, barChartY, barChartWidth, barChartHeight) withMarkLabelCount:6 withOrientationType:OrientationVertical];
-        
-        bar.titleArray = @[@"一月",@"二月",@"三月",@"四月",@"五月",@"六月"];
-        
-        bar.valueArray = @[@"15",@"27",@"13",@"42",@"34",@"2"];
-        
-        bar.colorArray = @[color1,color2,color3,color4,color5,color6];
-        
-        bar.locations = @[@0.15,@.85];
-        
-        bar.backgroundLineColor = [self colorWithHexString:@"#4b4e52" alpha:1];
-        
         [self.view addSubview:bar];
+        bar.titleArray = @[@"一月",@"二月",@"三月",@"四月",@"五月",@"六月",@"七月",@"八月",@"九月",@"十月",@"十一月",@"十二月"];
+        bar.valueArray = @[@"15",@"27",@"13",@"42",@"34",@"2",@"24",@"41",@"12",@"56",@"69",@"33"];
+        bar.colorArray = @[color1,color2,color3,color4,color5,color6,color1,color2,color3,color4,color5,color6];
+//        bar.singleColorArray = @[[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor]];
+        bar.locations = @[@0.15,@.85];
+        bar.markTextColor = [UIColor whiteColor];
+        bar.markTextFont = [UIFont systemFontOfSize:14];
+        bar.xlineColor = [self colorWithHexString:@"#4b4e52" alpha:1];
+        bar.contentValue = 12 * 45;
+        bar.barWidth = 25;
+        bar.margin = 20;
+        [bar drawChart];
         
     } else if (index == 3){///折线图
         CGFloat lineChartWidth = self.view.frame.size.width * 0.95;
@@ -128,8 +124,7 @@
         ring.titleArray = titleArray;
         ring.ringWidth = 20.0;
         ring.title = @"总计";
-        [ring drawArc];
-        
+        [ring drawChart];
     }
 }
 

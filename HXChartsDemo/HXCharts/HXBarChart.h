@@ -15,17 +15,6 @@ typedef NS_ENUM(NSInteger, OrientationType) {
 
 @interface HXBarChart : UIView
 
-
-/**
- 初始化方法
-
- @param frame frame
- @param markLabelCount 标注值个数
- @param type 柱状图方向
- @return self
- */
-- (instancetype)initWithFrame:(CGRect)frame withMarkLabelCount:(int)markLabelCount withOrientationType:(OrientationType)type;
-
 ///文字数组
 @property (nonatomic, strong) NSArray *titleArray;
 ///数值数组
@@ -37,8 +26,31 @@ typedef NS_ENUM(NSInteger, OrientationType) {
 ///单色数组
 @property (nonatomic, strong) NSArray *singleColorArray;
 ///标注值
-@property (nonatomic, weak) UIColor *markTextColor;
-@property (nonatomic, weak) UIFont *markTextFont;
-///背景线颜色
-@property (nonatomic, weak) UIColor *backgroundLineColor;
+@property (nonatomic, strong) UIColor *markTextColor;
+@property (nonatomic, strong) UIFont *markTextFont;
+///参照线颜色
+@property (nonatomic, strong) UIColor *xlineColor;
+
+///如果要图表可以滑动设置的偏移值，横向柱状图时为水平滑动，竖向柱状图时为垂直滑动
+///不需要滑动则不设置即可
+@property (nonatomic, assign) CGFloat contentValue;
+///默认会自动计算柱状图宽度和间隔 如果要设置 请两个属性一起设置
+///单个柱宽度
+@property (nonatomic, assign) CGFloat barWidth;
+///间距
+@property (nonatomic, assign) CGFloat margin;
+
+/**
+ 初始化方法
+ 
+ @param frame frame
+ @param markLabelCount 标注值个数
+ @param type 柱状图方向
+ @return self
+ */
+- (instancetype)initWithFrame:(CGRect)frame withMarkLabelCount:(int)markLabelCount withOrientationType:(OrientationType)type;
+
+///开始绘图
+- (void)drawChart;
+
 @end

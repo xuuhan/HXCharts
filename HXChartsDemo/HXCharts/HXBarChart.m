@@ -16,7 +16,10 @@
 @property (nonatomic, strong) NSMutableArray *gradientLayerArray;
 @property (nonatomic, strong) NSMutableArray *singleColorLayer;
 
+@property (nonatomic, strong) UIScrollView *scroll;
+
 @property (nonatomic, assign) CGFloat x;
+@property (nonatomic, assign) CGFloat y;
 @property (nonatomic, assign) CGFloat height;
 @property (nonatomic, assign) CGFloat width;
 @property (nonatomic, assign) CGFloat lineWidth;
@@ -35,70 +38,158 @@
 @implementation HXBarChart
 
 
-
 - (instancetype)initWithFrame:(CGRect)frame withMarkLabelCount:(int)markLabelCount withOrientationType:(OrientationType)type{
     self = [super initWithFrame:frame];
     
     if (self) {
-        _markLabelCount = markLabelCount;
+         _markLabelCount = markLabelCount - 1;
+        
         _type = type;
         
-        [self drawBar];
+        [self drawLine];
     }
     
     return self;
 }
 
-- (void)setTitleArray:(NSArray *)titleArray{
-    _titleArray = titleArray;
+- (void)drawLine{
     
-    if (titleArray.count == 0) {
+    CAShapeLayer *lineLayer= [CAShapeLayer layer];
+    _lineLayer = lineLayer;
+    lineLayer.fillColor = [UIColor clearColor].CGColor;
+    lineLayer.lineWidth = 1.0f;
+    lineLayer.strokeColor = [UIColor grayColor].CGColor;
+    
+    _height = self.frame.size.height;
+    _width = self.frame.size.width;
+    _barMargin = 20.0;
+    _lineHeight = _height - 20;
+    if (_type == OrientationHorizontal) {
+        _x = 60;
+        _y = 0;
+        _lineWidth = _width - _x - 20;
+    } else{
+        _x = 40;
+        _y = 20;
+        _lineWidth = _width - _x;
+    }
+    
+    //参照线
+    UIBezierPath *linePath = [UIBezierPath bezierPath];
+    
+    [linePath moveToPoint:CGPointMake(_x,_y)];
+    [linePath addLineToPoint:CGPointMake(_x + _lineWidth,_y)];
+    [linePath addLineToPoint:CGPointMake(_x + _lineWidth,_lineHeight)];
+    [linePath addLineToPoint:CGPointMake(_x,_lineHeight)];
+    [linePath addLineToPoint:CGPointMake(_x,_y)];
+    if (_type == OrientationHorizontal) {
+        for (int i = 1; i < _markLabelCount; i++) {
+            [linePath moveToPoint:CGPointMake(_x + _lineWidth / _markLabelCount * i, 0)];
+            [linePath addLineToPoint:CGPointMake(_x + _lineWidth / _markLabelCount * i,_lineHeight)];
+        }
+    } else{
+        
+        for (int i = 1; i < _markLabelCount; i++) {
+            [linePath moveToPoint:CGPointMake(_x, (_lineHeight - _y) / _markLabelCount * i +_y)];
+            [linePath addLineToPoint:CGPointMake(_x + _lineWidth,(_lineHeight - _y) / _markLabelCount * i + _y)];
+        }
+    }
+    
+    
+    lineLayer.path = linePath.CGPath;
+    [self.layer addSublayer:lineLayer];
+    
+}
+
+- (void)drawChart{
+    [self setScroll];
+    [self setXlineColor];
+    [self setTitle];
+    [self setValue];
+    [self setColor];
+    [self setSingleColorArray];
+    [self setMarkText];
+}
+
+#pragma mark set
+
+- (void)setScroll{
+    if (self.type == OrientationHorizontal) {
+        _scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.width, self.height - 20)];
+    } else{
+        _scroll = [[UIScrollView alloc] initWithFrame:CGRectMake(_x, 0, self.width - _x, self.height)];
+    }
+    [self addSubview:_scroll];
+    
+    if (self.type == OrientationHorizontal) {
+        _scroll.contentSize = CGSizeMake(0, _contentValue);
+    } else{
+        _scroll.contentSize = CGSizeMake(_contentValue, 0);
+    }
+    _scroll.showsVerticalScrollIndicator = NO;
+    _scroll.showsHorizontalScrollIndicator = NO;
+}
+
+- (void)setTitle{
+    
+    if (_titleArray.count == 0) {
         return;
     }
     
+    if (_margin > 0) {
+        _barMargin = _margin;
+    }
+    
     if (_type == OrientationHorizontal) {
-        _titleHeight = (_lineHeight - _barMargin - (titleArray.count - 1) * _barMargin) / titleArray.count;
+        _titleHeight = (_lineHeight - _barMargin - (_titleArray.count - 1) * _barMargin) / _titleArray.count;
+        if (_barWidth > 0) {
+            _titleHeight = _barWidth;
+        }
         _titleWidth = _x - 10;
         
-        for (int i = 0; i < titleArray.count; i++) {
-            UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, _barMargin / 2 + i * (_titleHeight + _barMargin), _titleWidth, _titleHeight)];
-            [self addSubview:titleLabel];
+        for (int i = 0; i < _titleArray.count; i++) {
+            UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0,_barMargin / 2 + i * (_titleHeight + _barMargin), _titleWidth, _titleHeight)];
+            [self.scroll addSubview:titleLabel];
             [self.markLabelArray addObject:titleLabel];
             titleLabel.textColor = [UIColor whiteColor];
             titleLabel.font = [UIFont systemFontOfSize:12];
-            titleLabel.text = titleArray[i];
+            titleLabel.text = _titleArray[i];
             titleLabel.textAlignment = NSTextAlignmentRight;
         }
     } else{
-
-        _titleHeight = (_lineHeight - _barMargin - (titleArray.count - 1) * _barMargin) / titleArray.count;
         
-        _titleWidth = _lineWidth;
+        _titleHeight = (_lineHeight - _y - _barMargin - (_titleArray.count - 1) * _barMargin) / _titleArray.count;
         
-        CGFloat labelWidth = _lineWidth / _markLabelCount;
+        CGFloat labelWidth = 0;
+        if (_barWidth <= 0) {
+            labelWidth = _lineWidth / _titleArray.count;
+        } else{
+            labelWidth = _barWidth;
+        }
         
-        for (int i = 0; i < titleArray.count; i ++) {
-            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(i * labelWidth + _x, _lineHeight + 5, labelWidth, 15)];
+        if (_margin > 0) {
+            labelWidth += _margin;
+        }
+        
+        for (int i = 0; i < _titleArray.count; i ++) {
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(i * labelWidth,  _lineHeight + 5, labelWidth, 15)];
             
-            [self addSubview:label];
+            [self.scroll addSubview:label];
             [self.markLabelArray addObject:label];
             label.textColor = [UIColor whiteColor];
             label.font = [UIFont systemFontOfSize:12];
             label.textAlignment = NSTextAlignmentCenter;
-            label.text = titleArray[i];
+            label.text = _titleArray[i];
         }
     }
-    
 }
 
-- (void)setValueArray:(NSArray *)valueArray{
-    _valueArray = valueArray;
-    
-    if (valueArray.count == 0) {
+- (void)setValue{
+    if (_valueArray.count == 0) {
         return;
     }
     
-    int maxValueAtArray = [[valueArray valueForKeyPath:@"@max.intValue"] intValue];
+    int maxValueAtArray = [[_valueArray valueForKeyPath:@"@max.intValue"] intValue];
     
     if (maxValueAtArray == 0) {
         return;
@@ -114,15 +205,25 @@
     CGFloat valueHeight = 0;
     CGFloat valueWidth = 0;
     CGFloat labelWidth = 0;
+    CGFloat height = 15;
     
     if (_type == OrientationHorizontal) {
-        valueHeight = (_lineHeight - _barMargin - (valueArray.count - 1) * _barMargin) / valueArray.count;
+        
+        valueHeight = (_lineHeight - _barMargin - (_valueArray.count - 1) * _barMargin) / _valueArray.count;
         
         valueWidth = _lineWidth;
         
         labelWidth = _lineWidth / _markLabelCount;
+        
+        if (self.barWidth > 0) {
+            valueHeight = self.barWidth;
+        }
+        
         for (int i = 0; i < (_markLabelCount + 1); i ++) {
-            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(i * labelWidth + _x - labelWidth / 2, _lineHeight + 5, labelWidth, 15)];
+            if (self.barWidth > 0) {
+                height = self.barWidth;
+            }
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(i * labelWidth + _x - labelWidth / 2, _lineHeight + 5 + _y, labelWidth, height)];
             
             [self addSubview:label];
             [self.markLabelArray addObject:label];
@@ -138,14 +239,22 @@
                 if (_maxValue < _markLabelCount) {
                     label.text = [NSString stringWithFormat:@"%.1f",(float)_maxValue / _markLabelCount * i];
                 } else{
+                    
                     label.text = [NSString stringWithFormat:@"%d",_maxValue / _markLabelCount * i];
                 }
             }
         }
     } else{
-        valueHeight = _lineHeight / valueArray.count;
+        
+        valueHeight = (_lineHeight - _y) / _markLabelCount;
+        
         valueWidth = _x - 10;
         labelWidth = (_lineWidth - _barMargin - ((_titleArray.count - 1) *_barMargin)) / _titleArray.count ;
+        
+        if (_barWidth > 0) {
+            labelWidth = _barWidth;
+        }
+        
         
         for (int i = 0; i < (_markLabelCount + 1); i ++) {
             UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0,_lineHeight - (valueHeight / 2 + i * valueHeight), valueWidth, valueHeight)];
@@ -171,7 +280,7 @@
         }
     }
     
-    for (int i = 0; i < valueArray.count; i++) {
+    for (int i = 0; i < _valueArray.count; i++) {
         //柱状图
         CAShapeLayer *shapeLayer = [CAShapeLayer layer];
         [self.singleColorLayer addObject:shapeLayer];
@@ -183,45 +292,59 @@
         
         UIBezierPath *barPath = [UIBezierPath bezierPath];
         
+        CGFloat drawWidth = self.bounds.size.width;
+        CGFloat drawHeight = self.bounds.size.height;
+        
         if (_type == OrientationHorizontal) {
-            shapeLayer.lineWidth= valueHeight;
+            if (self.contentValue > 0) {
+                drawHeight = self.contentValue;
+            }
+            
+            if (self.barWidth > 0) {
+                height = self.barWidth;
+            }
+            
+            shapeLayer.lineWidth = height;
             
             [barPath moveToPoint:CGPointMake(_x,_barMargin / 2 + _titleHeight / 2 + i * (_barMargin + valueHeight))];
-            [barPath addLineToPoint:CGPointMake(_x + valueWidth * ([valueArray[i] floatValue] / _maxValue),_barMargin / 2 + _titleHeight / 2 + i * (_barMargin + valueHeight))];
+            [barPath addLineToPoint:CGPointMake(_x + valueWidth * ([_valueArray[i] floatValue] / _maxValue),_barMargin / 2 + _titleHeight / 2 + i * (_barMargin + valueHeight))];
             
-            label.frame = CGRectMake(_x + valueWidth * ([valueArray[i] floatValue] / _maxValue) + 5, _barMargin / 2 + _titleHeight / 2 + i * (_barMargin + valueHeight) - valueHeight / 2, 50, valueHeight);
+            label.frame = CGRectMake(_x + valueWidth * ([_valueArray[i] floatValue] / _maxValue) + 5, _barMargin / 2 + _titleHeight / 2 + i * (_barMargin + valueHeight) - valueHeight / 2, 50, valueHeight);
             label.textAlignment = NSTextAlignmentLeft;
             
         } else{
-            shapeLayer.lineWidth= labelWidth;
+            if (self.contentValue > 0) {
+                drawWidth = self.contentValue;
+            }
             
-            [barPath moveToPoint:CGPointMake(_x + _barMargin / 2 + labelWidth / 2 + i * (_barMargin + labelWidth),_lineHeight)];
-            [barPath addLineToPoint:CGPointMake(_x + _barMargin / 2 + labelWidth / 2 + i * (_barMargin + labelWidth),_lineHeight - _lineHeight * ([valueArray[i] floatValue] / _maxValue))];
-        
-            label.frame = CGRectMake(_x + _barMargin / 2 + labelWidth / 2 + i * (_barMargin + labelWidth) - 25, _lineHeight - _lineHeight * ([valueArray[i] floatValue] / _maxValue) - 20, 50, 20);
+            shapeLayer.lineWidth = labelWidth;
+            
+            [barPath moveToPoint:CGPointMake(_barMargin / 2 + labelWidth / 2 + i * (_barMargin + labelWidth) ,_lineHeight)];
+            [barPath addLineToPoint:CGPointMake(_barMargin / 2 + labelWidth / 2 + i * (_barMargin + labelWidth) ,_lineHeight - (_lineHeight - _y) * ([_valueArray[i] floatValue] / _maxValue))];
+            
+            label.frame = CGRectMake(_barMargin / 2 + labelWidth / 2 + i * (_barMargin + labelWidth) - 25, _lineHeight - (_lineHeight - _y) * ([_valueArray[i] floatValue] / _maxValue) - _y, 50, 20);
             label.textAlignment = NSTextAlignmentCenter;
         }
         
-        [self addSubview:label];
+        [self.scroll addSubview:label];
         label.hidden = YES;
         label.textColor = [UIColor whiteColor];
         label.font = [UIFont systemFontOfSize:12];
-        label.text = [NSString stringWithFormat:@"%@",valueArray[i]];
-        
+        label.text = [NSString stringWithFormat:@"%@",_valueArray[i]];
         
         shapeLayer.path= barPath.CGPath;
-        [self.layer addSublayer:shapeLayer];
+        [self.scroll.layer addSublayer:shapeLayer];
         
         CAGradientLayer *gradientLayer = [CAGradientLayer layer];
         [self.gradientLayerArray addObject:gradientLayer];
-        gradientLayer.frame = self.bounds;
+        gradientLayer.frame = CGRectMake(0, 0, drawWidth, drawHeight);
         gradientLayer.backgroundColor = [UIColor clearColor].CGColor;
-        [self.layer addSublayer:gradientLayer];
-
+        [self.scroll.layer addSublayer:gradientLayer];
+        
         CAGradientLayer *colorLayer = [CAGradientLayer layer];
         [self.colorLayerArray addObject:colorLayer];
-
-        colorLayer.frame = CGRectMake(_x, 0, _lineWidth,_lineHeight);
+        
+        colorLayer.frame = CGRectMake(0, 0, drawWidth, drawHeight);
         colorLayer.startPoint = CGPointMake(0, 0);
         colorLayer.endPoint = CGPointMake(1, 0);
         
@@ -253,53 +376,77 @@
     });
 }
 
-- (void)drawBar{
-    
-    CAShapeLayer *lineLayer= [CAShapeLayer layer];
-    _lineLayer = lineLayer;
-    lineLayer.fillColor = [UIColor clearColor].CGColor;
-    lineLayer.lineWidth = 1.0f;
-    lineLayer.strokeColor = [UIColor grayColor].CGColor;
-    
-    _height = self.frame.size.height;
-    _width = self.frame.size.width;
-    _barMargin = 20.0;
-    _lineHeight = _height - 20;
-    if (_type == OrientationHorizontal) {
-        _x = 60;
-    } else{
-        _x = 40;
-    }
-    _lineWidth = _width - _x;
-    
-    //参照线
-    UIBezierPath *linePath = [UIBezierPath bezierPath];
-    
-    [linePath moveToPoint:CGPointMake(_x,0)];
-    [linePath addLineToPoint:CGPointMake(_x + _lineWidth,0)];
-    [linePath addLineToPoint:CGPointMake(_x + _lineWidth,_lineHeight)];
-    [linePath addLineToPoint:CGPointMake(_x,_lineHeight)];
-    [linePath addLineToPoint:CGPointMake(_x,0)];
-    if (_type == OrientationHorizontal) {
-        for (int i = 1; i < _markLabelCount; i++) {
-            [linePath moveToPoint:CGPointMake(_x + _lineWidth / _markLabelCount * i, 0)];
-            [linePath addLineToPoint:CGPointMake(_x + _lineWidth / _markLabelCount * i,_lineHeight)];
-        }
-    } else{
-        for (int i = 1; i < _markLabelCount; i++) {
-            [linePath moveToPoint:CGPointMake(_x, _lineHeight / _markLabelCount * i)];
-            [linePath addLineToPoint:CGPointMake(_x + _lineWidth,_lineHeight / _markLabelCount * i)];
-        }
+- (void)setColor{
+    if (self.colorArray.count == 0 ) {
+        return;
     }
     
+    NSMutableArray *array = [NSMutableArray array];
+    for (int i = 0; i < _colorArray.count; i ++) {
+        NSArray *color = _colorArray[i];
+        for (UIColor *c in color) {
+            [array addObject:(id)c.CGColor];
+        }
+        CAGradientLayer *layer = self.colorLayerArray[i];
+        layer.colors = array.copy;
+        [array removeAllObjects];
+    }
     
-    
-    lineLayer.path = linePath.CGPath;
-    [self.layer addSublayer:lineLayer];
-    
+    [self setLocations];
 }
 
-#pragma mark set
+- (void)setLocations{
+    if (_locations.count == 0) {
+        return;
+    }
+    
+    for (CAGradientLayer *layer in self.colorLayerArray) {
+        layer.locations = _locations;
+    }
+}
+
+- (void)setSingleColorArray{
+    if (_singleColorArray.count == 0) {
+        return;
+    }
+    
+    for (CAGradientLayer *layer in _gradientLayerArray) {
+        [layer removeFromSuperlayer];
+    }
+    
+    for (int i = 0; i < _singleColorArray.count; i ++) {
+        CAShapeLayer *layer = _singleColorLayer[i];
+        UIColor *color = _singleColorArray[i];
+        layer.strokeColor = color.CGColor;
+        
+        CABasicAnimation *ani = [ CABasicAnimation animationWithKeyPath : NSStringFromSelector ( @selector (strokeEnd))];
+        ani.fromValue = @0;
+        ani.toValue = @1;
+        ani.duration = 1.0;
+        [layer addAnimation:ani forKey:NSStringFromSelector(@selector(strokeEnd))];
+    }
+}
+
+- (void)setXlineColor{
+    _lineLayer.strokeColor = _xlineColor.CGColor;
+}
+
+- (void)setMarkText{
+    [self setMarkTextColor];
+    [self setMarkTextFont];
+}
+
+- (void)setMarkTextColor{
+    for (UILabel *label in self.markLabelArray) {
+        label.textColor = _markTextColor;
+    }
+}
+
+- (void)setMarkTextFont{
+    for (UILabel *label in self.markLabelArray) {
+        label.font = _markTextFont;
+    }
+}
 
 - (void)maxValue:(int)value{
     _valueLength ++;
@@ -310,66 +457,7 @@
     }
     
     int v = value / 10;
-    
     [self maxValue:v];
-}
-
-- (void)setColorArray:(NSArray *)colorArray{
-    
-    NSMutableArray *array = [NSMutableArray array];
-    
-    for (int i = 0; i < colorArray.count; i ++) {
-        NSArray *color = colorArray[i];
-        for (UIColor *c in color) {
-            [array addObject:(id)c.CGColor];
-        }
-        CAGradientLayer *layer = _colorLayerArray[i];
-        layer.colors = array.copy;
-        [array removeAllObjects];
-    }
-}
-
-- (void)setLocations:(NSArray *)locations{
-    for (CAGradientLayer *layer in _colorLayerArray) {
-        layer.locations = locations;
-    }
-}
-
-- (void)setSingleColorArray:(NSArray *)singleColorArray{
-    
-    for (CAGradientLayer *layer in _gradientLayerArray) {
-        [layer removeFromSuperlayer];
-    }
-    
-    for (int i = 0; i < singleColorArray.count; i ++) {
-        CAShapeLayer *layer = _singleColorLayer[i];
-        UIColor *color = singleColorArray[i];
-        layer.strokeColor = color.CGColor;
-        
-        CABasicAnimation *ani = [ CABasicAnimation animationWithKeyPath : NSStringFromSelector ( @selector (strokeEnd))];
-        ani.fromValue = @0;
-        ani.toValue = @1;
-        ani.duration = 1.0;
-        [layer addAnimation:ani forKey:NSStringFromSelector(@selector(strokeEnd))];
-    }
-    
-    
-}
-
-- (void)setMarkTextColor:(UIColor *)markTextColor{
-    for (UILabel *label in _markLabelArray) {
-        label.textColor = markTextColor;
-    }
-}
-
-- (void)setMarkTextFont:(UIFont *)markTextFont{
-    for (UILabel *label in _markLabelArray) {
-        label.font = markTextFont;
-    }
-}
-
-- (void)setBackgroundLineColor:(UIColor *)backgroundLineColor{
-    _lineLayer.strokeColor = backgroundLineColor.CGColor;
 }
 
 - (NSMutableArray *)colorLayerArray{
@@ -399,6 +487,5 @@
     }
     return _singleColorLayer;
 }
-
 
 @end

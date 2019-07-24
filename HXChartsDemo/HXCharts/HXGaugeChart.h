@@ -10,8 +10,6 @@
 
 @interface HXGaugeChart : UIView
 
-///初始化方法
-- (instancetype)initWithFrame:(CGRect)frame withMaxValue:(CGFloat)maxValue value:(CGFloat)value;
 ///值相关
 @property (nonatomic, copy) NSString *valueTitle;
 @property (nonatomic, weak) UIColor *valueColor;
@@ -30,4 +28,7 @@
 @property (nonatomic, assign) CGFloat outerCircleWidth;
 ///单色
 @property (nonatomic, strong) UIColor *singleColor;
+
+///初始化方法
+- (instancetype)initWithFrame:(CGRect)frame withMaxValue:(CGFloat)maxValue value:(CGFloat)value;
 @end

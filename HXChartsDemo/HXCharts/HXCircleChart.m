@@ -106,7 +106,6 @@
     colorLayer.endPoint = CGPointMake(1, 0);
     [gradientLayer addSublayer:colorLayer];
     
-    
     CAShapeLayer *gressLayer = [CAShapeLayer layer];
     gressLayer.lineWidth = 20.0;
     gressLayer.strokeColor = [UIColor blueColor].CGColor;

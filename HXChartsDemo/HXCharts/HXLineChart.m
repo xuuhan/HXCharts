@@ -121,7 +121,7 @@
         }
      
         if (_maxValue > abs(_minValue)) {
-            _direction = @"top";
+            _direction = @"up";
             _average = _maxValue / 5;
             _minYCount = 0;
             for (int i = 1; i < 6; i ++) {
@@ -189,7 +189,7 @@
             value = _maxValue;
             intNum = (count - 1);
         } else{
-            if ([_direction isEqualToString:@"top"]) {
+            if ([_direction isEqualToString:@"up"]) {
                 maxText = [NSString stringWithFormat:@"%d",_maxValue];
                 minText = [NSString stringWithFormat:@"%d",-(int)_average * _minYCount];
                 value = _maxValue;
@@ -271,7 +271,7 @@
         CGFloat numerator;
         CGFloat denominator = abs(largerValue) + _average * _minYCount;
         
-            if ([_direction isEqualToString:@"top"]) {
+            if ([_direction isEqualToString:@"up"]) {
             numerator = denominator - _average * _minYCount - [valueArray[0] floatValue];
             } else{
             numerator = _average * _minYCount - [valueArray[0] floatValue];
@@ -286,7 +286,7 @@
         
             for (int i = 1; i < valueArray.count ; i++) {
 
-                    if ([_direction isEqualToString:@"top"]) {
+                    if ([_direction isEqualToString:@"up"]) {
                         numerator = denominator - _average * _minYCount - [valueArray[i] floatValue];
                     } else{
                         numerator = _average * _minYCount - [valueArray[i] floatValue];
