@@ -126,6 +126,7 @@
     } else{
         _scroll.contentSize = CGSizeMake(_contentValue, 0);
     }
+    _scroll.contentOffset = self.contentOffset;
     _scroll.showsVerticalScrollIndicator = NO;
     _scroll.showsHorizontalScrollIndicator = NO;
 }

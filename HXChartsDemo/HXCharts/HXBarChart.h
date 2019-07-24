@@ -41,6 +41,9 @@ typedef NS_ENUM(NSInteger, OrientationType) {
 @property (nonatomic, assign) CGFloat barWidth;
 ///间距
 @property (nonatomic, assign) CGFloat margin;
+
+///可滑动时默认显示的初始偏移距离，默认不偏移
+@property (nonatomic, assign) CGPoint contentOffset;
 /**
  初始化方法
  
