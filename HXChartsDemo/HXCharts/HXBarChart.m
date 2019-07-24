@@ -324,6 +324,9 @@
             
             label.frame = CGRectMake(_barMargin / 2 + labelWidth / 2 + i * (_barMargin + labelWidth) - 25, _lineHeight - (_lineHeight - _y) * ([_valueArray[i] floatValue] / _maxValue) - _y, 50, 20);
             label.textAlignment = NSTextAlignmentCenter;
+            if (self.labelRotation) {
+                label.transform = CGAffineTransformMakeRotation(self.labelRotation);
+            }
         }
         
         [self.scroll addSubview:label];

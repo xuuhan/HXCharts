@@ -30,6 +30,8 @@ typedef NS_ENUM(NSInteger, OrientationType) {
 @property (nonatomic, strong) UIFont *markTextFont;
 ///参照线颜色
 @property (nonatomic, strong) UIColor *xlineColor;
+///设置标注值Label的旋转角度，效果原因只在竖直柱状图时有效
+@property (nonatomic, assign) CGFloat labelRotation;
 
 ///如果要图表可以滑动设置的偏移值，横向柱状图时为水平滑动，竖向柱状图时为垂直滑动
 ///不需要滑动则不设置即可
@@ -39,7 +41,6 @@ typedef NS_ENUM(NSInteger, OrientationType) {
 @property (nonatomic, assign) CGFloat barWidth;
 ///间距
 @property (nonatomic, assign) CGFloat margin;
-
 /**
  初始化方法
  
