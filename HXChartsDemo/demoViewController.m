@@ -76,9 +76,11 @@
         bar.markTextColor = [UIColor whiteColor];
         bar.markTextFont = [UIFont systemFontOfSize:14];
         bar.xlineColor = [self colorWithHexString:@"#4b4e52" alpha:1];
+        ///不需要滑动可不设置
         bar.contentValue = 12 * 45;
         bar.barWidth = 25;
         bar.margin = 20;
+        
         [bar drawChart];
         
     } else if (index == 3){///折线图
