@@ -130,17 +130,6 @@
     }
 }
 
--(UIImage*)convertViewToImage:(UIView*)v{
-    CGFloat wh = [UIScreen mainScreen].bounds.size.width;
-    CGSize s = CGSizeMake(wh, wh);
-    // 下面方法，第一个参数表示区域大小。第二个参数表示是否是非透明的。如果需要显示半透明效果，需要传NO，否则传YES。第三个参数就是屏幕密度了
-    UIGraphicsBeginImageContextWithOptions(s, NO , 0);
-    [v.layer renderInContext:UIGraphicsGetCurrentContext()];
-    UIImage*image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return image;
-}
-
 #pragma mark 设置16进制颜色
 - (UIColor *)colorWithHexString:(NSString *)color alpha:(CGFloat)alpha{
     //删除字符串中的空格
