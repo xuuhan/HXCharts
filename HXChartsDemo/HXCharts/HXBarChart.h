@@ -10,7 +10,12 @@
 
 typedef NS_ENUM(NSInteger, OrientationType) {
     OrientationHorizontal = 0,///横向
-    OrientationVertical = 1,///竖向
+    OrientationVertical = 1,///垂直
+};
+
+typedef NS_ENUM(NSInteger, GradientType) {
+    GradientHorizontal = 0,///横向渐变
+    GradientVertical = 1,///垂直渐变
 };
 
 @interface HXBarChart : UIView
@@ -44,6 +49,10 @@ typedef NS_ENUM(NSInteger, OrientationType) {
 
 ///可滑动时默认显示的初始偏移距离，默认不偏移
 @property (nonatomic, assign) CGPoint contentOffset;
+
+///渐变的方向，默认垂直
+@property (nonatomic, assign) GradientType gradientType;
+
 /**
  初始化方法
  

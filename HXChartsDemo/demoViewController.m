@@ -32,7 +32,7 @@
     if (index == 0) {///仪表盘
         
         HXGaugeChart *gauge = [[HXGaugeChart alloc] initWithFrame:CGRectMake(x, y, chartWidth, chartWidth) withMaxValue:300 value:225];
-
+        
         gauge.valueTitle = @"225";
         gauge.colorArray = @[[self colorWithHexString:@"#33d24e" alpha:1],
                              [self colorWithHexString:@"#f8e71c" alpha:1],
@@ -71,8 +71,8 @@
         bar.titleArray = @[@"一月",@"二月",@"三月",@"四月",@"五月",@"六月",@"七月",@"八月",@"九月",@"十月",@"十一月",@"十二月"];
         bar.valueArray = @[@"15",@"27",@"13",@"42",@"34",@"2",@"24",@"41",@"12",@"56",@"69",@"33"];
         bar.colorArray = @[color1,color2,color3,color4,color5,color6,color1,color2,color3,color4,color5,color6];
-//        bar.singleColorArray = @[[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor]];
-        bar.locations = @[@0.15,@.85];
+        //        bar.singleColorArray = @[[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor],[UIColor redColor]];
+        bar.locations = @[@0.15,@0.85];
         bar.markTextColor = [UIColor whiteColor];
         bar.markTextFont = [UIFont systemFontOfSize:14];
         bar.xlineColor = [self colorWithHexString:@"#4b4e52" alpha:1];

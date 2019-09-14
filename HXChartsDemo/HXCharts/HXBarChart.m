@@ -42,8 +42,8 @@
     self = [super initWithFrame:frame];
     
     if (self) {
-         _markLabelCount = markLabelCount - 1;
-        
+        _markLabelCount = markLabelCount - 1;
+        _gradientType = 1;
         _type = type;
         
         [self drawLine];
@@ -347,11 +347,7 @@
         
         CAGradientLayer *colorLayer = [CAGradientLayer layer];
         [self.colorLayerArray addObject:colorLayer];
-        
         colorLayer.frame = CGRectMake(0, 0, drawWidth, drawHeight);
-        colorLayer.startPoint = CGPointMake(0, 0);
-        colorLayer.endPoint = CGPointMake(1, 0);
-        
         [gradientLayer addSublayer:colorLayer];
         
         CAShapeLayer *gressLayer = [CAShapeLayer layer];
@@ -386,12 +382,13 @@
     }
     
     NSMutableArray *array = [NSMutableArray array];
+    
     for (int i = 0; i < _colorArray.count; i ++) {
         NSArray *color = _colorArray[i];
         for (UIColor *c in color) {
             [array addObject:(id)c.CGColor];
         }
-        CAGradientLayer *layer = self.colorLayerArray[i];
+        CAGradientLayer *layer = _colorLayerArray[i];
         layer.colors = array.copy;
         [array removeAllObjects];
     }
@@ -399,10 +396,24 @@
     [self setLocations];
 }
 
+- (void)setGradientType{
+    
+    for (CAGradientLayer *layer in self.colorLayerArray) {
+        if (_gradientType == GradientHorizontal) {
+            layer.startPoint = CGPointMake(1, 0);
+            layer.endPoint = CGPointMake(0, 0);
+        } else{
+            layer.startPoint = CGPointMake(0, 1);
+            layer.endPoint = CGPointMake(0, 0);
+        }
+    }
+}
+
 - (void)setLocations{
     if (_locations.count == 0) {
         return;
     }
+    [self setGradientType];
     
     for (CAGradientLayer *layer in self.colorLayerArray) {
         layer.locations = _locations;
@@ -470,6 +481,7 @@
     }
     return _colorLayerArray;
 }
+
 
 - (NSMutableArray *)markLabelArray{
     if (!_markLabelArray) {
