@@ -148,8 +148,6 @@ HXRingChart *ring = [[HXRingChart alloc] initWithFrame:CGRectMake(ringChartX, ri
 
 demo中颜色使用的是渐变色，也可以选择单色，更多属性请去.h文件里看
 
-整理了一些使用介绍：http://www.jianshu.com/p/e478636d7718 
-
 
 
 
