@@ -150,7 +150,7 @@ demo中颜色使用的是渐变色，也可以选择单色，更多属性请去.
 
  ## License
 
- `HXCharts` is available under the MIT license. See the LICENSE file for more info.
+ `HXCharts` is available under the MIT license. 
 
 
 
